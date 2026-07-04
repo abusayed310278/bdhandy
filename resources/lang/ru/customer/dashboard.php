@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'title'                  => 'Моя панель управления',
+    'welcome_back'           => 'С возвращением, :name!',
+    'account_subtitle'       => 'Вот что происходит в вашем аккаунте',
+    'find_provider'          => 'Найти исполнителя',
+    'active_requests'        => 'Активные заявки',
+    'open_requirements'      => 'Открытые требования',
+    'unread_messages'        => 'Непрочитанные сообщения',
+    'saved_providers'        => 'Сохранённые исполнители',
+    'recent_requests'        => 'Последние заявки',
+    'view_all'               => 'Смотреть все',
+    'no_requests'            => 'Заявок пока нет',
+    'no_requests_hint'       => 'Закажите услугу из профиля исполнителя',
+    'open_requirements_head' => 'Открытые требования',
+    'post_new'               => '+ Разместить новое',
+    'no_requirements'        => 'Открытых требований нет',
+    'post_requirement_link'  => 'Разместить требование',
+    'proposals_count'        => ':count предложение|:count предложения|:count предложений',
+    'no_bids'                => 'Нет ставок',
+    'post_requirement'       => 'Разместить требование',
+    'browse_services'        => 'Просмотр услуг',
+    'add_address'            => 'Добавить адрес',
+    'get_support'            => 'Получить поддержку',
+];

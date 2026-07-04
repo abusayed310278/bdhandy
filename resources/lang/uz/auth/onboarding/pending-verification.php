@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'verification' => 'Tasdiqlash',
+    'profile_approved' => 'Profil tasdiqlandi!',
+    'profile_approved_desc' => 'Tabriklaymiz! Profilingiz tasdiqlandi. Endi mijozlardan buyurtmalar qabul qilishingiz mumkin.',
+    'go_to_dashboard' => 'Boshqaruv paneliga o‘tish',
+    'verification_failed' => 'Tasdiqlash rad etildi',
+    'verification_failed_desc' => 'Hujjatlaringizni tasdiqlay olmadik. Quyidagi sabablarni ko‘rib chiqing va qayta yuboring.',
+    'action_required' => 'Harakat talab etiladi',
+    'action_required_desc' => 'Bir yoki bir nechta hujjatlaringizni qayta yuklash kerak. Quyidagi sabablarni ko‘rib chiqing va qayta yuboring.',
+    'under_review' => 'Ko‘rib chiqilmoqda',
+    'under_review_desc' => 'Hujjatlaringiz bizning jamoamiz tomonidan ko‘rib chiqilmoqda. Jarayon yakunlangach, sizga elektron pochta yuboriladi.',
+    'typical_timeline' => 'Kutilayotgan vaqt',
+    'timeline_received' => 'Hujjatlar qabul qilindi va ko‘rib chiqish navbatiga qo‘yildi',
+    'timeline_review' => 'Tasdiqlash jamoasi ko‘rib chiqishi (24–48 soat)',
+    'timeline_decision' => 'Qaror :email manziliga yuborildi',
+    'complete_setup' => 'Sozlashni yakunlang',
+    'complete_setup_desc' => 'Siz hali ham kerakli hujjatlarni yuklashingiz kerak.',
+    'require_reupload' => 'Qayta yuklanishi kerak bo‘lgan hujjatlar:',
+    'reupload_btn' => 'Hujjatlarni qayta yuklash',
+    'questions' => 'Savollar bormi?',
+    'contact_support' => 'Qo‘llab-quvvatlash xizmati',
+    'account_id' => 'Hisob IDsi:',
+    'document_status' => 'Hujjat holati',
+    'sign_out' => 'Tizimdan chiqish',
+];

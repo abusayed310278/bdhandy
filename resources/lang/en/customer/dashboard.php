@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'title'                  => 'My Dashboard',
+    'welcome_back'           => 'Welcome back, :name!',
+    'account_subtitle'       => "Here's what's happening with your account",
+    'find_provider'          => 'Find a Provider',
+    'active_requests'        => 'Active Requests',
+    'open_requirements'      => 'Open Requirements',
+    'unread_messages'        => 'Unread Messages',
+    'saved_providers'        => 'Saved Providers',
+    'recent_requests'        => 'Recent Requests',
+    'view_all'               => 'View all',
+    'no_requests'            => 'No requests yet',
+    'no_requests_hint'       => "Book a service from a provider's profile",
+    'open_requirements_head' => 'Open Requirements',
+    'post_new'               => '+ Post New',
+    'no_requirements'        => 'No open requirements',
+    'post_requirement_link'  => 'Post a requirement',
+    'proposals_count'        => ':count proposal|:count proposals',
+    'no_bids'                => 'No bids',
+    'post_requirement'       => 'Post Requirement',
+    'browse_services'        => 'Browse Services',
+    'add_address'            => 'Add Address',
+    'get_support'            => 'Get Support',
+];

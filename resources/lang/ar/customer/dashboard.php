@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'title'                  => 'لوحتي',
+    'welcome_back'           => 'مرحباً بعودتك، :name!',
+    'account_subtitle'       => 'إليك ما يجري في حسابك',
+    'find_provider'          => 'ابحث عن مزود خدمة',
+    'active_requests'        => 'الطلبات النشطة',
+    'open_requirements'      => 'المتطلبات المفتوحة',
+    'unread_messages'        => 'الرسائل غير المقروءة',
+    'saved_providers'        => 'مقدمو الخدمة المحفوظون',
+    'recent_requests'        => 'الطلبات الأخيرة',
+    'view_all'               => 'عرض الكل',
+    'no_requests'            => 'لا توجد طلبات حتى الآن',
+    'no_requests_hint'       => 'احجز خدمة من ملف مزود الخدمة',
+    'open_requirements_head' => 'المتطلبات المفتوحة',
+    'post_new'               => '+ نشر جديد',
+    'no_requirements'        => 'لا توجد متطلبات مفتوحة',
+    'post_requirement_link'  => 'انشر متطلباً',
+    'proposals_count'        => ':count عرض|:count عروض',
+    'no_bids'                => 'لا توجد عروض',
+    'post_requirement'       => 'نشر متطلب',
+    'browse_services'        => 'تصفح الخدمات',
+    'add_address'            => 'إضافة عنوان',
+    'get_support'            => 'الحصول على دعم',
+];

@@ -1,0 +1,5 @@
+@extends('errors.layout')
+@section('title', __('errors/503.title'))
+@section('code', '503')
+@section('message', __('errors/503.message'))
+@section('description', __('errors/503.description', ['app' => config('app.name')]))

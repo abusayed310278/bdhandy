@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'title'                  => 'আমার ড্যাশবোর্ড',
+    'welcome_back'           => 'স্বাগতম, :name!',
+    'account_subtitle'       => 'আপনার অ্যাকাউন্টে কী ঘটছে তা এখানে দেখুন',
+    'find_provider'          => 'সেবা প্রদানকারী খুঁজুন',
+    'active_requests'        => 'সক্রিয় অনুরোধ',
+    'open_requirements'      => 'খোলা প্রয়োজনীয়তা',
+    'unread_messages'        => 'অপঠিত বার্তা',
+    'saved_providers'        => 'সংরক্ষিত সেবা প্রদানকারী',
+    'recent_requests'        => 'সাম্প্রতিক অনুরোধ',
+    'view_all'               => 'সব দেখুন',
+    'no_requests'            => 'এখনো কোনো অনুরোধ নেই',
+    'no_requests_hint'       => 'কোনো সেবা প্রদানকারীর প্রোফাইল থেকে সেবা বুক করুন',
+    'open_requirements_head' => 'খোলা প্রয়োজনীয়তা',
+    'post_new'               => '+ নতুন পোস্ট',
+    'no_requirements'        => 'কোনো খোলা প্রয়োজনীয়তা নেই',
+    'post_requirement_link'  => 'একটি প্রয়োজনীয়তা পোস্ট করুন',
+    'proposals_count'        => ':count প্রস্তাব|:count প্রস্তাব',
+    'no_bids'                => 'কোনো বিড নেই',
+    'post_requirement'       => 'প্রয়োজনীয়তা পোস্ট করুন',
+    'browse_services'        => 'সেবাসমূহ দেখুন',
+    'add_address'            => 'ঠিকানা যোগ করুন',
+    'get_support'            => 'সহায়তা নিন',
+];

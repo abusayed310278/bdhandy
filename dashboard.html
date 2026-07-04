@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="h-full bg-slate-50 text-slate-700">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0F94EA">
+  <title>Dashboard — ServiceHub Provider</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50:'#F0F8FF',100:'#E0F1FE',200:'#BAE0FD',300:'#7CC8FB',
+              400:'#38ADF7',500:'#0F94EA',600:'#0277C7',700:'#0561A1'
+            },
+            accent: {
+              50:'#FFF7ED',100:'#FFEDD5',200:'#FED7AA',300:'#FDBA74',
+              400:'#FB923C',500:'#F97316',600:'#EA580C',700:'#C2410C'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter','system-ui','sans-serif'],
+            bn:   ['"Hind Siliguri"','"Noto Sans Bengali"','sans-serif'],
+            ar:   ['Cairo','Tajawal','"Noto Naskh Arabic"','sans-serif']
+          },
+          boxShadow: {
+            soft: '0 4px 20px -8px rgba(15, 148, 234, 0.15)',
+            warm: '0 4px 20px -8px rgba(249, 115, 22, 0.15)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Alpine.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <style>
+    html[lang="bn"] body { font-family: 'Hind Siliguri', system-ui, sans-serif; line-height: 1.75; }
+    html[lang="ar"] body { font-family: 'Cairo', system-ui, sans-serif; }
+    html[lang="en"] body { font-family: 'Inter', system-ui, sans-serif; }
+    [dir="rtl"] .rtl-flip { transform: scaleX(-1); }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body class="min-h-full antialiased font-sans" x-data="{ sidebarOpen: false, notifOpen: false, profileOpen: false, langOpen: false }">
+
+<!-- ===================== SIDEBAR (Desktop fixed, Mobile drawer) ===================== -->
+<aside
+  class="fixed inset-y-0 start-0 z-40 w-60 bg-white border-e border-slate-200 flex flex-col transition-transform duration-200 ease-in-out lg:translate-x-0"
+  :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
+>
+  <!-- Brand -->
+  <div class="h-16 px-5 flex items-center justify-between border-b border-slate-200 shrink-0">
+    <a href="#" class="flex items-center gap-2" dir="ltr">
+      <span class="w-8 h-8 rounded-lg bg-primary-500 flex items-center justify-center text-white shadow-soft">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      </span>
+      <div class="leading-tight">
+        <span class="block font-bold text-slate-900">ServiceHub</span>
+        <span class="block text-[10px] uppercase tracking-wide text-primary-600 font-medium">Provider</span>
+      </div>
+    </a>
+    <button @click="sidebarOpen = false" class="lg:hidden p-2 -me-2 text-slate-500" aria-label="Close sidebar">
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <!-- Nav -->
+  <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
+    <p class="px-3 mb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400">Workspace</p>
+
+    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-primary-50 text-primary-700 border-s-2 border-primary-500">
+      <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Dashboard
+    </a>
+
+    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-50">
+      <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      My Services
+    </a>
+
+    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-50">
+      <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      Service Areas
+    </a>
+
+    <a href="#" class="flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-50">
+      <span class="flex items-center gap-3">
+        <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Requests
+      </span>
+      <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-primary-100 text-primary-700 font-semibold">4</span>
+    </a>
+
+    <a href="#" class="flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-50">
+      <span class="flex items-center gap-3">
+        <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-4V5l-2-2h-4L8 5v2H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+        Leads
+      </span>
+      <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-accent-100 text-accent-700 font-semibold">12</span>
+    </a>
+
+    <a href="#" class="flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-50">
+      <span class="flex items-center gap-3">
+        <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Messages
+      </span>
+      <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-primary-100 text-primary-700 font-semibold">3</span>
+    </a>
+
+    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-50">
+      <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Reviews
+    </a>
+
+    <p class="px-3 mt-5 mb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400">Account</p>
+
+    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-50">
+      <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Subscription
+    </a>
+
+    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-50">
+      <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Analytics
+    </a>
+
+    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-50">
+      <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </a>
+  </nav>
+
+  <!-- Subscription mini-card -->
+  <div class="p-3 border-t border-slate-200 shrink-0">
+    <div class="bg-primary-50 rounded-xl p-3">
+      <div class="flex items-center justify-between mb-1.5">
+        <span class="text-xs font-semibold text-primary-700">Yearly Plan</span>
+        <span class="text-[10px] text-primary-600">62%</span>
+      </div>
+      <p class="text-[11px] text-slate-600 mb-2">✦ 187 days remaining</p>
+      <div class="h-1.5 rounded-full bg-primary-200 overflow-hidden mb-3">
+        <div class="h-full bg-primary-500 rounded-full" style="width:62%"></div>
+      </div>
+      <a href="#" class="block w-full text-center text-xs font-medium px-3 py-1.5 rounded-lg bg-accent-500 text-white hover:bg-accent-600 transition">
+        Upgrade plan
+      </a>
+    </div>
+  </div>
+</aside>
+
+<!-- Mobile sidebar overlay -->
+<div
+  x-show="sidebarOpen"
+  @click="sidebarOpen = false"
+  class="fixed inset-0 z-30 bg-slate-900/50 lg:hidden"
+  style="display:none"
+></div>
+
+
+<!-- ===================== MAIN AREA ===================== -->
+<div class="lg:ps-60 min-h-screen flex flex-col">
+
+  <!-- ===================== TOPBAR ===================== -->
+  <header class="sticky top-0 z-20 h-16 bg-white border-b border-slate-200">
+    <div class="h-full px-4 lg:px-6 flex items-center gap-3">
+
+      <!-- Hamburger (mobile) -->
+      <button @click="sidebarOpen = true" class="lg:hidden -ms-2 p-2 rounded-md text-slate-600 hover:bg-slate-100" aria-label="Open sidebar">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+
+      <!-- Breadcrumb / Page title -->
+      <div class="min-w-0 flex-1">
+        <p class="text-[11px] text-slate-400 hidden sm:block">Workspace · Provider</p>
+        <h1 class="text-base sm:text-lg font-semibold text-slate-900 truncate">Dashboard</h1>
+      </div>
+
+      <!-- Topbar search (desktop) -->
+      <div class="hidden md:block max-w-xs flex-1">
+        <label class="relative block">
+          <span class="absolute inset-y-0 start-0 flex items-center ps-3 text-slate-400">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </span>
+          <input type="search" placeholder="Search anything…" class="block w-full ps-9 pe-3 py-2 text-sm rounded-lg bg-slate-50 border border-transparent focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-100 focus:outline-none transition">
+        </label>
+      </div>
+
+      <!-- Notifications -->
+      <div class="relative" @click.outside="notifOpen = false">
+        <button @click="notifOpen = !notifOpen" class="relative p-2 rounded-md text-slate-600 hover:bg-slate-100" aria-label="Notifications">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="absolute top-1.5 end-1.5 w-2 h-2 rounded-full bg-accent-500 ring-2 ring-white"></span>
+        </button>
+        <div x-show="notifOpen" x-transition class="absolute top-full end-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white rounded-xl shadow-lg border border-slate-200 z-30" style="display:none">
+          <div class="p-3 border-b border-slate-100 flex items-center justify-between">
+            <span class="text-sm font-semibold text-slate-900">Notifications</span>
+            <a href="#" class="text-xs text-primary-600 hover:text-primary-700">Mark all read</a>
+          </div>
+          <div class="max-h-80 overflow-y-auto">
+            <a href="#" class="flex gap-3 p-3 hover:bg-slate-50 border-b border-slate-50">
+              <span class="w-8 h-8 rounded-lg bg-primary-50 text-primary-600 flex items-center justify-center text-sm shrink-0">📨</span>
+              <div class="min-w-0 flex-1">
+                <p class="text-sm text-slate-900"><strong>New lead</strong> in Gulshan for AC Repair</p>
+                <p class="text-[11px] text-slate-500 mt-0.5">2 min ago</p>
+              </div>
+            </a>
+            <a href="#" class="flex gap-3 p-3 hover:bg-slate-50 border-b border-slate-50">
+              <span class="w-8 h-8 rounded-lg bg-accent-50 text-accent-600 flex items-center justify-center text-sm shrink-0">⭐</span>
+              <div class="min-w-0 flex-1">
+                <p class="text-sm text-slate-900"><strong>Sadia M.</strong> left a 5-star review</p>
+                <p class="text-[11px] text-slate-500 mt-0.5">1 hr ago</p>
+              </div>
+            </a>
+            <a href="#" class="flex gap-3 p-3 hover:bg-slate-50">
+              <span class="w-8 h-8 rounded-lg bg-green-50 text-green-600 flex items-center justify-center text-sm shrink-0">✓</span>
+              <div class="min-w-0 flex-1">
+                <p class="text-sm text-slate-900"><strong>Request completed</strong> — payment recorded</p>
+                <p class="text-[11px] text-slate-500 mt-0.5">3 hr ago</p>
+              </div>
+            </a>
+          </div>
+          <div class="p-2 border-t border-slate-100 text-center">
+            <a href="#" class="text-xs font-medium text-primary-600 hover:text-primary-700">View all notifications</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Language switcher -->
+      <div class="relative hidden sm:block" @click.outside="langOpen = false">
+        <button @click="langOpen = !langOpen" class="flex items-center gap-1.5 px-2 py-2 rounded-md text-sm text-slate-600 hover:bg-slate-100">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span>EN</span>
+        </button>
+        <div x-show="langOpen" x-transition class="absolute top-full end-0 mt-2 w-40 bg-white rounded-xl shadow-lg border border-slate-200 p-1 z-30" style="display:none">
+          <a href="#" class="flex items-center justify-between px-3 py-2 rounded-md hover:bg-slate-50 text-sm">English <span class="text-primary-500">✓</span></a>
+          <a href="#" class="block px-3 py-2 rounded-md hover:bg-slate-50 text-sm">বাংলা</a>
+          <a href="#" class="block px-3 py-2 rounded-md hover:bg-slate-50 text-sm" dir="rtl">العربية</a>
+        </div>
+      </div>
+
+      <!-- Profile -->
+      <div class="relative" @click.outside="profileOpen = false">
+        <button @click="profileOpen = !profileOpen" class="flex items-center gap-2 ps-1 pe-2 py-1 rounded-full hover:bg-slate-100">
+          <span class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xs font-semibold">RA</span>
+          <span class="hidden md:inline text-sm font-medium text-slate-700">Rahim A.</span>
+          <svg class="w-3.5 h-3.5 text-slate-400 hidden md:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div x-show="profileOpen" x-transition class="absolute top-full end-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-slate-200 p-1 z-30" style="display:none">
+          <div class="px-3 py-2.5 border-b border-slate-100 mb-1">
+            <p class="text-sm font-semibold text-slate-900">Rahim Ahmed</p>
+            <p class="text-xs text-slate-500">Rahim AC Service · BD4729</p>
+          </div>
+          <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-50 text-sm text-slate-700">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            View Profile
+          </a>
+          <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-50 text-sm text-slate-700">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            Settings
+          </a>
+          <div class="border-t border-slate-100 my-1"></div>
+          <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-red-50 text-sm text-red-600">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Log out
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- ===================== MAIN CONTENT ===================== -->
+  <main class="flex-1 p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8">
+
+    <!-- Page Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+      <div>
+        <h2 class="text-xl sm:text-2xl font-bold text-slate-900">Welcome back, Rahim 👋</h2>
+        <p class="mt-1 text-sm text-slate-500">Here's what's happening with your business today.</p>
+      </div>
+      <div class="flex gap-2">
+        <button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export
+        </button>
+        <button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-primary-500 text-white text-sm font-medium hover:bg-primary-600 transition shadow-soft">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add service
+        </button>
+      </div>
+    </div>
+
+    <!-- Verification banner (if not verified) -->
+    <div class="mb-6 rounded-xl bg-accent-50 border border-accent-200 p-4 flex flex-col sm:flex-row items-start gap-3 sm:items-center">
+      <div class="w-10 h-10 rounded-lg bg-white text-accent-600 flex items-center justify-center shrink-0">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div class="flex-1">
+        <p class="text-sm font-semibold text-slate-900">Complete your verification</p>
+        <p class="text-xs text-slate-600 mt-0.5">Upload your NID to get the verified badge and rank higher in search.</p>
+      </div>
+      <a href="#" class="text-sm font-medium px-3.5 py-1.5 rounded-lg bg-accent-500 text-white hover:bg-accent-600 transition shrink-0">
+        Verify now
+      </a>
+    </div>
+
+
+    <!-- KPI Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+
+      <div class="bg-white rounded-xl border border-slate-200 p-4 sm:p-5">
+        <div class="flex items-center justify-between mb-2">
+          <p class="text-xs font-medium text-slate-500">Active Leads</p>
+          <span class="w-7 h-7 rounded-md bg-primary-50 text-primary-600 flex items-center justify-center">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-4V5l-2-2h-4L8 5v2H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+          </span>
+        </div>
+        <p class="text-2xl sm:text-3xl font-bold text-slate-900">142</p>
+        <p class="text-[11px] text-slate-500 mt-1 flex items-center gap-1.5">
+          <span class="text-green-600 font-medium inline-flex items-center gap-0.5">
+            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+            12%
+          </span>
+          vs last 30 days
+        </p>
+      </div>
+
+      <div class="bg-white rounded-xl border border-slate-200 p-4 sm:p-5">
+        <div class="flex items-center justify-between mb-2">
+          <p class="text-xs font-medium text-slate-500">Requests</p>
+          <span class="w-7 h-7 rounded-md bg-primary-50 text-primary-600 flex items-center justify-center">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </span>
+        </div>
+        <p class="text-2xl sm:text-3xl font-bold text-slate-900">38</p>
+        <p class="text-[11px] text-slate-500 mt-1 flex items-center gap-1.5">
+          <span class="text-green-600 font-medium inline-flex items-center gap-0.5">
+            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+            8%
+          </span>
+          vs last 30 days
+        </p>
+      </div>
+
+      <div class="bg-white rounded-xl border border-slate-200 p-4 sm:p-5">
+        <div class="flex items-center justify-between mb-2">
+          <p class="text-xs font-medium text-slate-500">Earnings (est.)</p>
+          <span class="w-7 h-7 rounded-md bg-accent-50 text-accent-600 flex items-center justify-center">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </span>
+        </div>
+        <p class="text-2xl sm:text-3xl font-bold text-slate-900">৳ 24.5K</p>
+        <p class="text-[11px] text-slate-500 mt-1 flex items-center gap-1.5">
+          <span class="text-green-600 font-medium inline-flex items-center gap-0.5">
+            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+            21%
+          </span>
+          vs last month
+        </p>
+      </div>
+
+      <div class="bg-white rounded-xl border border-slate-200 p-4 sm:p-5">
+        <div class="flex items-center justify-between mb-2">
+          <p class="text-xs font-medium text-slate-500">Avg. Rating</p>
+          <span class="w-7 h-7 rounded-md bg-accent-50 text-accent-600 flex items-center justify-center">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </span>
+        </div>
+        <p class="text-2xl sm:text-3xl font-bold text-slate-900">4.9</p>
+        <p class="text-[11px] text-slate-500 mt-1">231 reviews · all-time</p>
+      </div>
+
+    </div>
+
+
+    <!-- 2-column area: schedule + chart -->
+    <div class="grid lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
+
+      <!-- Today's Schedule -->
+      <div class="lg:col-span-1 bg-white rounded-xl border border-slate-200 p-5">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-sm font-semibold text-slate-900">Today's Schedule</h3>
+            <p class="text-xs text-slate-500 mt-0.5">3 jobs · Mon, May 12</p>
+          </div>
+          <button class="text-slate-400 hover:text-slate-600 p-1">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+          </button>
+        </div>
+
+        <ol class="relative space-y-4 ps-5">
+          <span class="absolute top-1 bottom-1 start-[7px] w-px bg-slate-200" aria-hidden="true"></span>
+
+          <li class="relative">
+            <span class="absolute -start-5 mt-1 w-3.5 h-3.5 rounded-full bg-primary-500 ring-4 ring-primary-100"></span>
+            <p class="text-[11px] font-medium text-primary-700">09:30 AM</p>
+            <p class="text-sm font-semibold text-slate-900 mt-0.5">AC Servicing — Gulshan</p>
+            <p class="text-xs text-slate-500">Sadia M. · ৳ 1,500</p>
+          </li>
+
+          <li class="relative">
+            <span class="absolute -start-5 mt-1 w-3.5 h-3.5 rounded-full bg-accent-500 ring-4 ring-accent-100"></span>
+            <p class="text-[11px] font-medium text-accent-700">12:00 PM</p>
+            <p class="text-sm font-semibold text-slate-900 mt-0.5">AC Installation — Banani</p>
+            <p class="text-xs text-slate-500">Karim H. · ৳ 3,200</p>
+          </li>
+
+          <li class="relative">
+            <span class="absolute -start-5 mt-1 w-3.5 h-3.5 rounded-full bg-slate-300 ring-4 ring-slate-100"></span>
+            <p class="text-[11px] font-medium text-slate-500">04:30 PM</p>
+            <p class="text-sm font-semibold text-slate-900 mt-0.5">Gas Refill — Uttara</p>
+            <p class="text-xs text-slate-500">Nadia J. · ৳ 2,000</p>
+          </li>
+        </ol>
+
+        <a href="#" class="mt-4 inline-flex items-center gap-1 text-xs font-medium text-primary-600 hover:text-primary-700">
+          View full calendar <span class="rtl-flip">→</span>
+        </a>
+      </div>
+
+
+      <!-- Performance Chart -->
+      <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-5">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div>
+            <h3 class="text-sm font-semibold text-slate-900">Performance</h3>
+            <p class="text-xs text-slate-500 mt-0.5">Requests & completed · last 30 days</p>
+          </div>
+          <div class="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5 text-xs">
+            <button class="px-2.5 py-1 rounded-md text-slate-600 hover:bg-white">7D</button>
+            <button class="px-2.5 py-1 rounded-md bg-white text-slate-900 font-medium shadow-sm">30D</button>
+            <button class="px-2.5 py-1 rounded-md text-slate-600 hover:bg-white">90D</button>
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="flex items-center gap-4 mb-4 text-xs">
+          <span class="inline-flex items-center gap-1.5 text-slate-600">
+            <span class="w-2.5 h-2.5 rounded-sm bg-primary-500"></span> Requests
+          </span>
+          <span class="inline-flex items-center gap-1.5 text-slate-600">
+            <span class="w-2.5 h-2.5 rounded-sm bg-accent-400"></span> Completed
+          </span>
+        </div>
+
+        <!-- Inline SVG chart -->
+        <div class="relative h-44 sm:h-52">
+          <svg viewBox="0 0 600 200" class="w-full h-full" preserveAspectRatio="none">
+            <!-- Grid lines -->
+            <line x1="0" y1="40" x2="600" y2="40" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="3 3"/>
+            <line x1="0" y1="80" x2="600" y2="80" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="3 3"/>
+            <line x1="0" y1="120" x2="600" y2="120" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="3 3"/>
+            <line x1="0" y1="160" x2="600" y2="160" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="3 3"/>
+
+            <!-- Area: Requests -->
+            <path d="M 0 130 L 50 110 L 100 120 L 150 80 L 200 90 L 250 60 L 300 70 L 350 40 L 400 55 L 450 30 L 500 45 L 550 25 L 600 35 L 600 200 L 0 200 Z"
+                  fill="rgba(15, 148, 234, 0.10)"/>
+            <!-- Line: Requests -->
+            <path d="M 0 130 L 50 110 L 100 120 L 150 80 L 200 90 L 250 60 L 300 70 L 350 40 L 400 55 L 450 30 L 500 45 L 550 25 L 600 35"
+                  fill="none" stroke="#0F94EA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+            <!-- Line: Completed -->
+            <path d="M 0 160 L 50 150 L 100 140 L 150 130 L 200 135 L 250 100 L 300 110 L 350 80 L 400 90 L 450 70 L 500 85 L 550 65 L 600 75"
+                  fill="none" stroke="#FB923C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0"/>
+
+            <!-- Data points: Requests -->
+            <g fill="#0F94EA">
+              <circle cx="150" cy="80" r="3"/>
+              <circle cx="350" cy="40" r="3"/>
+              <circle cx="550" cy="25" r="3"/>
+            </g>
+          </svg>
+        </div>
+
+        <!-- X-axis labels -->
+        <div class="flex justify-between text-[10px] text-slate-400 mt-2 px-0.5">
+          <span>W1</span><span>W2</span><span>W3</span><span>W4</span><span>Now</span>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- Recent Leads + Recent Reviews -->
+    <div class="grid lg:grid-cols-3 gap-4 sm:gap-6">
+
+      <!-- Recent Leads (wider) -->
+      <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200">
+        <div class="p-5 border-b border-slate-100 flex items-center justify-between gap-2">
+          <div>
+            <h3 class="text-sm font-semibold text-slate-900">Recent leads</h3>
+            <p class="text-xs text-slate-500 mt-0.5">Customers near your service areas</p>
+          </div>
+          <a href="#" class="text-xs font-medium text-primary-600 hover:text-primary-700 inline-flex items-center gap-1 shrink-0">
+            View all <span class="rtl-flip">→</span>
+          </a>
+        </div>
+
+        <!-- Mobile: card list -->
+        <div class="divide-y divide-slate-100">
+          <div class="p-4 flex items-start gap-3 hover:bg-slate-50 transition">
+            <div class="w-10 h-10 rounded-lg bg-red-50 text-red-600 flex items-center justify-center text-lg shrink-0">❄️</div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2 flex-wrap">
+                <p class="text-sm font-semibold text-slate-900 truncate">AC not cooling, urgent</p>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-red-50 text-red-700 ring-1 ring-red-200 shrink-0">
+                  <span class="w-1 h-1 rounded-full bg-red-500 inline-block animate-pulse"></span> Emergency
+                </span>
+              </div>
+              <p class="mt-0.5 text-xs text-slate-500 line-clamp-1">Split AC in living room stopped cooling.</p>
+              <div class="mt-1.5 flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
+                <span>📍 Gulshan · 1.2km</span>
+                <span>৳ 1,000 – ৳ 2,500</span>
+                <span>2m ago</span>
+              </div>
+            </div>
+            <button class="text-xs font-medium px-3 py-1.5 rounded-lg bg-primary-500 text-white hover:bg-primary-600 transition shrink-0 hidden sm:inline-flex">Send proposal</button>
+          </div>
+
+          <div class="p-4 flex items-start gap-3 hover:bg-slate-50 transition">
+            <div class="w-10 h-10 rounded-lg bg-primary-50 text-primary-600 flex items-center justify-center text-lg shrink-0">🔧</div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2 flex-wrap">
+                <p class="text-sm font-semibold text-slate-900 truncate">AC compressor sound issue</p>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-yellow-50 text-yellow-700 ring-1 ring-yellow-200 shrink-0">Urgent</span>
+              </div>
+              <p class="mt-0.5 text-xs text-slate-500 line-clamp-1">Strange noise from outdoor unit since yesterday.</p>
+              <div class="mt-1.5 flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
+                <span>📍 Banani · 2.8km</span>
+                <span>৳ 800 – ৳ 1,500</span>
+                <span>22m ago</span>
+              </div>
+            </div>
+            <button class="text-xs font-medium px-3 py-1.5 rounded-lg bg-primary-500 text-white hover:bg-primary-600 transition shrink-0 hidden sm:inline-flex">Send proposal</button>
+          </div>
+
+          <div class="p-4 flex items-start gap-3 hover:bg-slate-50 transition">
+            <div class="w-10 h-10 rounded-lg bg-primary-50 text-primary-600 flex items-center justify-center text-lg shrink-0">🛠️</div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2 flex-wrap">
+                <p class="text-sm font-semibold text-slate-900 truncate">Install new split AC unit</p>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-primary-50 text-primary-700 ring-1 ring-primary-200 shrink-0">Normal</span>
+              </div>
+              <p class="mt-0.5 text-xs text-slate-500 line-clamp-1">1.5 ton inverter AC, second floor bedroom.</p>
+              <div class="mt-1.5 flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
+                <span>📍 Uttara · 5.1km</span>
+                <span>৳ 2,500 – ৳ 4,000</span>
+                <span>1h ago</span>
+              </div>
+            </div>
+            <button class="text-xs font-medium px-3 py-1.5 rounded-lg bg-primary-500 text-white hover:bg-primary-600 transition shrink-0 hidden sm:inline-flex">Send proposal</button>
+          </div>
+
+          <div class="p-4 flex items-start gap-3 hover:bg-slate-50 transition">
+            <div class="w-10 h-10 rounded-lg bg-primary-50 text-primary-600 flex items-center justify-center text-lg shrink-0">🌬️</div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2 flex-wrap">
+                <p class="text-sm font-semibold text-slate-900 truncate">AC gas refill needed</p>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-primary-50 text-primary-700 ring-1 ring-primary-200 shrink-0">Normal</span>
+              </div>
+              <p class="mt-0.5 text-xs text-slate-500 line-clamp-1">Cooling reduced over past month, need a refill.</p>
+              <div class="mt-1.5 flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
+                <span>📍 Mirpur · 4.3km</span>
+                <span>৳ 1,500 – ৳ 2,200</span>
+                <span>3h ago</span>
+              </div>
+            </div>
+            <button class="text-xs font-medium px-3 py-1.5 rounded-lg bg-primary-500 text-white hover:bg-primary-600 transition shrink-0 hidden sm:inline-flex">Send proposal</button>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Recent Reviews -->
+      <div class="lg:col-span-1 bg-white rounded-xl border border-slate-200">
+        <div class="p-5 border-b border-slate-100 flex items-center justify-between gap-2">
+          <h3 class="text-sm font-semibold text-slate-900">Recent reviews</h3>
+          <a href="#" class="text-xs font-medium text-primary-600 hover:text-primary-700 shrink-0">View all</a>
+        </div>
+
+        <div class="divide-y divide-slate-100">
+          <div class="p-4">
+            <div class="flex items-center gap-2 mb-1.5">
+              <div class="w-7 h-7 rounded-full bg-primary-100 text-primary-700 text-xs font-semibold flex items-center justify-center">SM</div>
+              <div class="flex-1 min-w-0">
+                <p class="text-xs font-semibold text-slate-900 truncate">Sadia M.</p>
+                <span class="text-[10px] text-accent-500">★★★★★</span>
+              </div>
+              <span class="text-[10px] text-slate-400">2h</span>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed line-clamp-2">"Quick, professional, and very fair pricing. Will book again!"</p>
+          </div>
+
+          <div class="p-4">
+            <div class="flex items-center gap-2 mb-1.5">
+              <div class="w-7 h-7 rounded-full bg-accent-100 text-accent-700 text-xs font-semibold flex items-center justify-center">KH</div>
+              <div class="flex-1 min-w-0">
+                <p class="text-xs font-semibold text-slate-900 truncate">Karim H.</p>
+                <span class="text-[10px] text-accent-500">★★★★★</span>
+              </div>
+              <span class="text-[10px] text-slate-400">1d</span>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed line-clamp-2">"Showed up on time, fixed the issue in 20 minutes. Top notch."</p>
+          </div>
+
+          <div class="p-4">
+            <div class="flex items-center gap-2 mb-1.5">
+              <div class="w-7 h-7 rounded-full bg-primary-100 text-primary-700 text-xs font-semibold flex items-center justify-center">NJ</div>
+              <div class="flex-1 min-w-0">
+                <p class="text-xs font-semibold text-slate-900 truncate">Nadia J.</p>
+                <span class="text-[10px] text-accent-500">★★★★<span class="text-slate-300">★</span></span>
+              </div>
+              <span class="text-[10px] text-slate-400">3d</span>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed line-clamp-2">"Good service. Could have communicated a bit earlier on ETA."</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+
+  <!-- ===================== MOBILE BOTTOM NAV ===================== -->
+  <nav class="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-slate-200 pb-[env(safe-area-inset-bottom)]">
+    <div class="grid grid-cols-5 h-16">
+      <a href="#" class="flex flex-col items-center justify-center gap-1 text-primary-600">
+        <span class="absolute top-1 w-1 h-1 rounded-full bg-primary-500"></span>
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span class="text-[10px] font-medium">Home</span>
+      </a>
+      <a href="#" class="flex flex-col items-center justify-center gap-1 text-slate-500 relative">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-4V5l-2-2h-4L8 5v2H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+        <span class="text-[10px] font-medium">Leads</span>
+        <span class="absolute top-2.5 ms-5 w-4 h-4 rounded-full bg-accent-500 text-white text-[9px] font-bold flex items-center justify-center">12</span>
+      </a>
+      <a href="#" class="flex flex-col items-center justify-center gap-1 text-slate-500">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span class="text-[10px] font-medium">Requests</span>
+      </a>
+      <a href="#" class="flex flex-col items-center justify-center gap-1 text-slate-500 relative">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span class="text-[10px] font-medium">Chat</span>
+        <span class="absolute top-2.5 ms-5 w-4 h-4 rounded-full bg-primary-500 text-white text-[9px] font-bold flex items-center justify-center">3</span>
+      </a>
+      <a href="#" class="flex flex-col items-center justify-center gap-1 text-slate-500">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="text-[10px] font-medium">Profile</span>
+      </a>
+    </div>
+  </nav>
+
+</div>
+
+</body>
+</html>

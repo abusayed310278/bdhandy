@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'service_area' => 'Xizmat ko‘rsatish hududi',
+    'profile' => 'Profil',
+    'services' => 'Xizmatlar',
+    'area' => 'Hudud',
+    'documents' => 'Hujjatlar',
+    'title' => 'Xizmat hududingizni belgilang',
+    'subtitle' => 'Asosiy joylashuvingizni xaritada belgilang va xizmat ko‘rsatish radiusini o‘rnating.',
+    'country' => 'Mamlakat',
+    'select_country' => 'Mamlakatni tanlang',
+    'division' => 'Viloyat',
+    'select_division' => 'Viloyatni tanlang',
+    'district' => 'Tuman/Shahar',
+    'select_district' => 'Tuman/Shaharni tanlang',
+    'select_area' => 'Hududni tanlang',
+    'address_landmark' => 'Manzil / Mo‘ljal',
+    'address_placeholder' => 'masalan: 12-uy, 5-ko‘cha, 3-dahla',
+    'service_radius' => 'Xizmat radiusi:',
+    'lat' => 'Kenglik:',
+    'lng' => 'Uzunlik:',
+    'map_instruction' => 'Pinni yangilash uchun markerni sudrang yoki yuqoridagi hududlardan birini tanlang. Aylana sizning xizmat ko‘rsatish radiusini ko‘rsatadi.',
+    'back' => 'Orqaga',
+    'save_continue' => 'Saqlash va davom etish',
+];

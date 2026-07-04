@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'verification' => 'Verification',
+    'profile_approved' => 'Profile Approved!',
+    'profile_approved_desc' => 'Congratulations! Your profile has been verified. You can now start receiving leads from customers.',
+    'go_to_dashboard' => 'Go to Dashboard',
+    'verification_failed' => 'Verification Failed',
+    'verification_failed_desc' => "We couldn't verify your documents. Please review the reasons below and re-submit.",
+    'action_required' => 'Action Required',
+    'action_required_desc' => 'One or more of your documents need to be re-uploaded. Please review the reasons below and re-submit.',
+    'under_review' => 'Under Review',
+    'under_review_desc' => "Your documents are being reviewed by our team. You'll receive an email once the process is complete.",
+    'typical_timeline' => 'Typical timeline',
+    'timeline_received' => 'Documents received and queued for review',
+    'timeline_review' => 'Verification team reviews (24–48 hours)',
+    'timeline_decision' => 'Decision emailed to :email',
+    'complete_setup' => 'Complete your setup',
+    'complete_setup_desc' => 'You still need to upload your required documents.',
+    'require_reupload' => 'Documents requiring re-upload:',
+    'reupload_btn' => 'Re-upload Documents',
+    'questions' => 'Questions?',
+    'contact_support' => 'Contact support',
+    'account_id' => 'Account ID:',
+    'document_status' => 'Document status',
+    'sign_out' => 'Sign out',
+];

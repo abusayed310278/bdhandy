@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'service_area' => 'Service Area',
+    'profile' => 'Profile',
+    'services' => 'Services',
+    'area' => 'Area',
+    'documents' => 'Documents',
+    'title' => 'Set your service area',
+    'subtitle' => 'Pin your base location and set the radius you cover.',
+    'country' => 'Country',
+    'select_country' => 'Select country',
+    'division' => 'Division',
+    'select_division' => 'Select division',
+    'district' => 'District',
+    'select_district' => 'Select district',
+    'select_area' => 'Select area',
+    'address_landmark' => 'Address / Landmark',
+    'address_placeholder' => 'e.g. House 12, Road 5, Sector 3',
+    'service_radius' => 'Service radius:',
+    'lat' => 'Lat:',
+    'lng' => 'Lng:',
+    'map_instruction' => 'Drag the marker or select an area above to update the pin. The circle shows your service radius.',
+    'back' => 'Back',
+    'save_continue' => 'Save & Continue',
+];

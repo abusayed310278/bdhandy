@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'title'                  => 'Mening paneelim',
+    'welcome_back'           => 'Xush kelibsiz, :name!',
+    'account_subtitle'       => 'Hisobingizda nima bo\'layotgani haqida ma\'lumot',
+    'find_provider'          => 'Xizmat ko\'rsatuvchi topish',
+    'active_requests'        => 'Faol so\'rovlar',
+    'open_requirements'      => 'Ochiq talablar',
+    'unread_messages'        => 'O\'qilmagan xabarlar',
+    'saved_providers'        => 'Saqlangan xizmat ko\'rsatuvchilar',
+    'recent_requests'        => 'So\'nggi so\'rovlar',
+    'view_all'               => 'Barchasini ko\'rish',
+    'no_requests'            => 'Hali so\'rovlar yo\'q',
+    'no_requests_hint'       => 'Xizmat ko\'rsatuvchi profilidan xizmat buyurtma bering',
+    'open_requirements_head' => 'Ochiq talablar',
+    'post_new'               => '+ Yangi e\'lon',
+    'no_requirements'        => 'Ochiq talablar yo\'q',
+    'post_requirement_link'  => 'Talab e\'lon qilish',
+    'proposals_count'        => ':count taklif|:count takliflar',
+    'no_bids'                => 'Takliflar yo\'q',
+    'post_requirement'       => 'Talab e\'lon qilish',
+    'browse_services'        => 'Xizmatlarni ko\'rish',
+    'add_address'            => 'Manzil qo\'shish',
+    'get_support'            => 'Yordam olish',
+];

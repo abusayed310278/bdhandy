@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Block authenticated / internal routes
+Disallow: /dashboard
+Disallow: /admin/
+Disallow: /provider/
+Disallow: /customer/
+Disallow: /profile
+Disallow: /lang/
+Disallow: /geo/
+Disallow: /guide/
+
+# Block over-filtered search variants that produce duplicate content
+Disallow: /providers?*verified=
+Disallow: /providers?*emergency=
+
+# Sitemap
+Sitemap: https://bdhandy.test/sitemap.xml

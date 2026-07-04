@@ -1,0 +1,634 @@
+
+SERVICE MARKETPLACE SAAS - DATABASE DESIGN
+==========================================
+
+1. users
+--------
+- id
+- name
+- user_code //6 digit unique digit
+- email
+- phone
+- password
+- photo
+- gender // male, female, other
+- date_of_birth
+- preferred_language // en, bn, ar
+- status // active, inactive, suspended, banned
+- email_verified_at
+- phone_verified_at
+- last_login_at
+- last_login_ip
+- remember_token
+- provider // google, facebook, apple
+- provider_user_id
+- access_token
+- refresh_token
+- bio
+- created_at
+- updated_at
+
+
+2. roles and permission package
+
+
+5. otp_codes
+------------
+- id
+- user_id
+- phone
+- code
+- type // login, register, forgot_password
+- expires_at
+- verified_at
+- created_at
+
+
+6. customer_addresses
+--------------------
+- id
+- user_id
+- address_type // house/office/business
+- address
+- country_id
+- division_id
+- district_id
+- area_id
+- latitude
+- longitude
+- created_at
+- updated_at
+
+
+7. provider_profiles
+--------------------
+- id
+- user_id
+- provider_type // freelancer, business
+- business_name
+- slug
+- logo
+- cover_photo
+- description
+- years_of_experience
+- experience_level // beginner, intermediate, expert
+- languages
+- emergency_available // yes, no
+- is_verified
+- verification_status // pending, in_review, approved, rejected
+- is_featured
+- primary_phone
+- whatsapp_number
+- website
+- facebook_url
+- instagram_url
+- youtube_url
+- status // active, inactive, suspended
+- created_at
+- updated_at
+- deleted_at
+
+document_type
+- id
+- type
+- provider_type
+
+8. provider_documents
+---------------------
+- id
+- provider_profile_id
+- document_type_id // nid, passport, trade_license, emirates_id
+- document_number
+- document_file
+- verification_status // pending, approved, rejected
+- rejection_reason
+- verified_by
+- verified_at
+- created_at
+- updated_at
+
+currency
+-id
+-symbol
+-name
+-status
+
+9. countries
+------------
+- id
+- name
+- iso_code
+- phone_code
+- currency_code
+- currency_symbol
+- locale
+- direction // ltr, rtl
+- status // active, inactive
+- created_at
+
+
+10. divisions
+-------------
+- id
+- country_id
+- name
+- slug
+- created_at
+
+
+11. districts
+-------------
+- id
+- division_id
+- name
+- slug
+- created_at
+
+
+12. areas
+---------
+- id
+- district_id
+- name
+- slug
+- latitude
+- longitude
+- created_at
+
+
+13. provider_service_areas
+--------------------------
+- id
+- provider_profile_id
+- country_id
+- division_id
+- district_id
+- area_id
+- address
+- latitude
+- longitude
+- radius_km
+- created_at
+- updated_at
+
+
+14. categories
+--------------
+- id
+- slug
+- icon
+- image
+- sort_order
+- status // active, inactive
+- translations
+- created_at
+- updated_at
+
+
+15. services
+------------
+- id
+- category_id
+- slug
+- image
+- pricing_type // fixed, range, hourly, quote
+- status // active, inactive
+- translations
+- created_at
+- updated_at
+
+
+16. provider_services
+---------------------
+- id
+- provider_profile_id
+- service_id
+- title
+- description
+- pricing_type // fixed, range, hourly, quote
+- price_fixed
+- price_min
+- price_max
+- currency_id
+- duration_minutes
+- is_emergency
+- status // active, inactive
+- created_at
+- updated_at
+
+day_of_week
+-id
+-day
+
+17. provider_business_hours
+---------------------------
+- id
+- provider_profile_id
+- day_of_week_id
+- start_time
+- end_time
+- is_closed
+- created_at
+- updated_at
+
+holidays
+-id
+-date_of_holiday
+-reason
+-provider_profile_id
+
+18. provider_gallery
+--------------------
+- id
+- provider_profile_id
+- url
+- caption
+- sort_order
+- is_video
+- created_at
+
+
+19. service_requests
+--------------------
+- id
+- customer_id
+- provider_id
+- service_id
+- request_number
+- title
+- description
+- preferred_date
+- preferred_time
+- address
+- latitude
+- longitude
+- urgency // normal, urgent, emergency
+- estimated_price
+- final_price
+- currency_id
+- payment_status // pending, paid, failed, refunded
+- request_status // pending, accepted, in_progress, completed, disputed, cancelled
+- cancellation_reason
+- completed_at
+- created_at
+- updated_at
+- deleted_at
+
+
+20. request_attachments
+-----------------------
+- id
+- service_request_id
+- file
+- file_type // image, video, pdf
+- created_at
+
+
+21. request_status_logs
+-----------------------
+- id
+- service_request_id
+- old_status
+- new_status
+- changed_by
+- notes
+- created_at
+
+
+22. customer_requirements
+-------------------------
+- id
+- customer_id
+- category_id
+- service_id
+- title
+- description
+- budget_type //fixed rate / /within range/ negotiable
+- budget_fixed
+- budget_min
+- budget_max
+- currency_id
+- urgency // normal, urgent, emergency
+- preferred_date
+- address
+- latitude
+- longitude
+- expiry_at
+- visibility_radius_km
+- status // open, assigned, completed, expired, cancelled
+- created_at
+- updated_at
+- deleted_at
+
+
+23. requirement_attachments
+---------------------------
+- id
+- requirement_id
+- file
+- file_type
+- created_at
+
+
+24. requirement_proposals
+-------------------------
+- id
+- requirement_id
+- provider_id
+- message
+- proposed_price
+- currency_id
+- estimated_arrival_time
+- status // pending, accepted, rejected, withdrawn
+- created_at
+- updated_at
+
+
+25. conversations
+-----------------
+- id
+- type // request_chat, support_chat
+- related_request_id
+- created_at
+- updated_at
+
+
+26. messages
+------------
+- id
+- conversation_id
+- sender_id
+- message
+- message_type // text, image, voice, file
+- is_read
+- read_at
+- created_at
+
+
+27. reviews
+-----------
+- id
+- service_request_id
+- customer_id
+- provider_id
+- rating
+- review
+- is_approved
+- created_at
+- updated_at
+
+
+28. review_replies
+------------------
+- id
+- review_id
+- provider_id
+- reply
+- created_at
+
+
+29. subscription_plans
+----------------------
+- id
+- name
+- slug
+- duration_months
+- price
+- currency_id
+- discount_percent
+- lead_limit
+- service_area_limit
+- gallery_limit
+- search_rank_weight
+- is_featured
+- is_verified_badge_included
+- status // active, inactive
+- created_at
+- updated_at
+
+
+30. subscriptions
+-----------------
+- id
+- provider_id
+- plan_id
+- start_date
+- end_date
+- auto_renew
+- payment_status // pending, paid, failed
+- subscription_status // active, expired, cancelled, grace
+- created_at
+- updated_at
+
+
+31. subscription_invoices
+-------------------------
+- id
+- subscription_id
+- invoice_number
+- subtotal
+- discount
+- total
+- currency_id
+- payment_method // bkash, stripe, sslcommerz
+- payment_status // pending, paid, failed
+- paid_at
+- created_at
+
+
+32. payment_transactions
+------------------------
+- id
+- user_id
+- invoice_id
+- gateway
+- transaction_id
+- amount
+- currency_id
+- status // pending, success, failed, refunded
+- gateway_response
+- paid_at
+- created_at
+
+
+33. notifications
+-----------------
+- id
+- user_id
+- type // request, payment, system, promotion
+- title
+- body
+- data
+- is_read
+- read_at
+- created_at
+
+
+34. notification_preferences
+----------------------------
+- id
+- user_id
+- email_enabled
+- sms_enabled
+- push_enabled
+- whatsapp_enabled
+- marketing_enabled
+- created_at
+- updated_at
+
+
+35. saved_providers
+-------------------
+- id
+- customer_id
+- provider_id
+- created_at
+
+
+36. saved_searches
+------------------
+- id
+- customer_id
+- keyword
+- filters
+- created_at
+
+
+37. search_logs
+---------------
+- id
+- user_id
+- keyword
+- category_id
+- latitude
+- longitude
+- results_count
+- created_at
+
+
+38. banners
+-----------
+- id
+- title
+- image
+- url
+- position // homepage_top, sidebar, footer
+- start_date
+- end_date
+- status // active, inactive
+- created_at
+
+
+
+
+40. faqs
+--------
+- id
+- question
+- answer
+- sort_order
+- status // active, inactive
+- created_at
+
+
+41. contact_messages
+--------------------
+- id
+- name
+- email
+- phone
+- subject
+- message
+- status // new, pending, replied, closed, spam
+- created_at
+
+
+42. settings
+------------
+- id
+- key
+- value
+- type // string, json, integer, boolean
+- created_at
+- updated_at
+
+
+43. activity_logs
+-----------------
+- id
+- user_id
+- action
+- model_type
+- model_id
+- ip_address
+- user_agent
+- created_at
+
+
+45. support_tickets
+-------------------
+- id
+- ticket_number
+- user_id
+- subject
+- description
+- priority // low, medium, high, urgent
+- department // technical, billing, verification, general
+- assigned_to
+- status // open, pending, replied, resolved, closed
+- last_reply_at
+- created_at
+- updated_at
+
+
+46. support_ticket_messages
+---------------------------
+- id
+- support_ticket_id
+- sender_id
+- message
+- attachment
+- created_at
+
+
+47. affiliate_system
+--------------------
+- id
+- user_id
+- referral_code
+- commission_type // percentage, fixed
+- commission_value
+- minimum_payout
+- total_earnings
+- total_paid
+- status // active, inactive, suspended
+- created_at
+- updated_at
+
+
+48. referrals
+-------------
+- id
+- affiliate_id
+- referred_user_id
+- subscription_id
+- commission_amount
+- commission_status // pending, approved, paid, rejected
+- paid_at
+- created_at
+
+
+49. coupons
+-----------
+- id
+- code
+- title
+- discount_type // percentage, fixed
+- discount_value
+- usage_limit
+- used_count
+- start_date
+- end_date
+- status // active, expired, inactive
+- created_at
+

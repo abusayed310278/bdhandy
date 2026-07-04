@@ -1,0 +1,5 @@
+@extends('errors.layout')
+@section('title', __('errors/500.title'))
+@section('code', '500')
+@section('message', __('errors/500.message'))
+@section('description', __('errors/500.description'))
