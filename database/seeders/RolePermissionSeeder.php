@@ -120,6 +120,10 @@ class RolePermissionSeeder extends Seeder
                 'edit languages',
                 'delete languages',
             ],
+            'Referral' => [
+                'view referrals',
+                'edit referrals',
+            ],
         ];
 
         // 3. Create Permissions and Assign to Admin

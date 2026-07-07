@@ -14,6 +14,33 @@
     <div class="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">{{ session('error') }}</div>
   @endif
 
+  {{-- Wallet balance strip --}}
+  <div class="flex items-center justify-between bg-white rounded-xl border border-slate-200 px-5 py-3">
+    <div>
+      <p class="text-xs text-slate-500">Wallet balance</p>
+      <p class="text-lg font-bold text-slate-900">৳{{ number_format($walletBalance, 2) }}</p>
+    </div>
+    <a href="{{ route('provider.wallet.index') }}" class="text-xs font-semibold text-primary-600 hover:text-primary-700 underline">Add Balance →</a>
+  </div>
+
+  {{-- Past Due Banner --}}
+  @if(!$subscription && $pastDue)
+  <div class="bg-red-50 border border-red-200 rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wider text-red-600 mb-1">Payment Failed</p>
+      <h2 class="text-xl font-bold text-slate-900">{{ $pastDue->plan->name }} — access paused</h2>
+      <p class="text-sm text-slate-600 mt-1">Your wallet balance wasn't enough to renew this plan. Add balance and renew to restore access to your dashboard.</p>
+    </div>
+    <form method="POST" action="{{ route('provider.subscription.checkout') }}">
+      @csrf
+      <input type="hidden" name="plan_id" value="{{ $pastDue->plan_id }}">
+      <button type="submit" class="px-5 py-2.5 rounded-xl bg-red-600 text-white text-sm font-bold hover:bg-red-700 transition shadow-soft whitespace-nowrap">
+        Renew Now — ৳{{ number_format($pastDue->plan->price, 0) }}
+      </button>
+    </form>
+  </div>
+  @endif
+
   {{-- Current Plan Banner --}}
   @if($subscription)
   <div class="bg-gradient-to-r from-primary-50 to-accent-50 rounded-2xl border border-primary-100 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -25,6 +52,11 @@
           Valid until <strong>{{ $subscription->end_date->format('M d, Y') }}</strong>
           ({{ $subscription->end_date->diffForHumans() }})
         </p>
+        @if($subscription->auto_renew && $subscription->next_billing_at)
+          <p class="text-xs text-slate-500 mt-0.5">
+            Next auto-charge <strong>{{ $subscription->next_billing_at->format('M d, Y') }}</strong> — ৳{{ number_format($subscription->plan->price, 0) }} from your wallet balance
+          </p>
+        @endif
       @else
         <p class="text-sm text-slate-600 mt-1">Free plan — valid forever</p>
       @endif

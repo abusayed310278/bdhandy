@@ -32,14 +32,10 @@ class AffiliateController extends Controller
             ->latest()
             ->paginate(20);
 
-        $totalReferrals  = $affiliate->referrals()->count();
-        $pendingEarnings = $affiliate->referrals()
-            ->where('commission_status', 'pending')
-            ->sum('commission_amount');
-        $balance = $affiliate->total_earnings - $affiliate->total_paid;
+        $totalReferrals = $affiliate->referrals()->count();
 
         return view('provider.affiliate.index', compact(
-            'affiliate', 'referrals', 'totalReferrals', 'pendingEarnings', 'balance'
+            'affiliate', 'referrals', 'totalReferrals'
         ));
     }
 }

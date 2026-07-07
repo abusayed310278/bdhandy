@@ -6,7 +6,7 @@
 
   <div>
     <h2 class="text-xl font-bold text-slate-900">Affiliate Program</h2>
-    <p class="text-slate-500 text-xs mt-0.5">Earn 50% commission when a referred provider activates their first paid plan</p>
+    <p class="text-slate-500 text-xs mt-0.5">Earn 50% commission (capped per currency) when a referred provider makes their first paid subscription or wallet top-up — credited instantly to your <a href="{{ route('provider.wallet.index') }}" class="underline font-semibold">wallet balance</a>, usable toward your own subscription.</p>
   </div>
 
   {{-- Stats --}}
@@ -19,13 +19,12 @@
       <p class="text-xs font-medium text-slate-500">Total Earned</p>
       <p class="text-2xl font-bold text-slate-900 mt-1">৳{{ number_format($affiliate->total_earnings, 0) }}</p>
     </div>
-    <div class="bg-white rounded-xl border border-slate-200 p-5">
-      <p class="text-xs font-medium text-slate-500">Pending Commission</p>
-      <p class="text-2xl font-bold text-amber-600 mt-1">৳{{ number_format($pendingEarnings, 0) }}</p>
-    </div>
-    <div class="bg-white rounded-xl border border-slate-200 p-5">
-      <p class="text-xs font-medium text-slate-500">Available Balance</p>
-      <p class="text-2xl font-bold text-green-600 mt-1">৳{{ number_format($balance, 0) }}</p>
+    <div class="bg-white rounded-xl border border-slate-200 p-5 sm:col-span-2">
+      <p class="text-xs font-medium text-slate-500">Credited to your wallet</p>
+      <div class="flex items-end justify-between mt-1">
+        <p class="text-2xl font-bold text-green-600">৳{{ number_format($affiliate->total_paid, 0) }}</p>
+        <a href="{{ route('provider.wallet.index') }}" class="text-xs font-semibold text-primary-600 hover:text-primary-700 underline">View Wallet →</a>
+      </div>
     </div>
   </div>
 
@@ -34,7 +33,7 @@
     <div class="flex items-start justify-between gap-4">
       <div>
         <h3 class="font-semibold text-primary-900">Your Referral Link</h3>
-        <p class="text-xs text-primary-700 mt-0.5">Share this link. When a new provider signs up and pays their first plan, you earn 50% of the plan price.</p>
+        <p class="text-xs text-primary-700 mt-0.5">Share this link. When a new provider signs up and makes their first paid subscription or wallet top-up, you earn 50% (capped per currency) — credited straight to your wallet.</p>
       </div>
       <span class="shrink-0 inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold uppercase
         {{ $affiliate->status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
@@ -67,9 +66,9 @@
     </div>
 
     <div class="flex flex-wrap gap-4 text-xs text-primary-800 pt-1">
-      <span>Commission: <strong>50%</strong> of first paid plan</span>
+      <span>Commission: <strong>50%</strong> of first subscription or top-up (capped per currency)</span>
       <span>·</span>
-      <span>Minimum payout: <strong>৳{{ number_format($affiliate->minimum_payout, 0) }}</strong></span>
+      <span>Credited instantly to your wallet</span>
       <span>·</span>
       <span>One commission per referred provider</span>
     </div>
@@ -175,7 +174,7 @@
   {{-- Payout info --}}
   <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs text-slate-600">
     <p class="font-semibold text-slate-700 mb-1">About payouts</p>
-    <p>Commissions are marked <strong>Pending</strong> for 7 days after the referred provider's payment clears, then move to <strong>Approved</strong>. Payouts are processed manually by the admin team once your balance reaches ৳{{ number_format($affiliate->minimum_payout, 0) }}. Contact support to request a payout.</p>
+    <p>As a service provider, your commission is credited to your <a href="{{ route('provider.wallet.index') }}" class="underline font-semibold">wallet balance</a> the moment a referred provider makes their first paid subscription or wallet top-up — no waiting period, no manual payout request. Use the balance immediately toward your own subscription, or keep topping it up.</p>
   </div>
 
 </div>

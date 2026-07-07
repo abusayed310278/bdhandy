@@ -17,10 +17,22 @@
         @endif
       </p>
     </div>
-    <a href="{{ route('provider.requests.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-500 text-white text-sm font-semibold hover:bg-primary-600 transition">
-      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
-      {{ __('provider/dashboard.view_requests') }}
-    </a>
+    <div class="flex items-center gap-3">
+      <a href="{{ route('provider.wallet.index') }}" class="flex items-center gap-3 pl-4 pr-2 py-2 rounded-xl bg-white border border-slate-200 hover:border-primary-200 hover:shadow-md transition">
+        <div>
+          <p class="text-[11px] text-slate-400 leading-none">Wallet Balance</p>
+          <p class="text-sm font-bold text-slate-900 mt-0.5">৳{{ number_format($user->wallet_balance, 2) }}</p>
+        </div>
+        <span class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-primary-50 text-primary-600 text-xs font-semibold">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add
+        </span>
+      </a>
+      <a href="{{ route('provider.requests.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-500 text-white text-sm font-semibold hover:bg-primary-600 transition">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+        {{ __('provider/dashboard.view_requests') }}
+      </a>
+    </div>
   </div>
 
   {{-- Pending verification banner --}}

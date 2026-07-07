@@ -44,6 +44,7 @@ return [
         'payment.failed'                      => ['email' => true,  'sms' => true,  'push' => true],
         'service_request.invoice_paid'        => ['email' => true,  'sms' => true,  'push' => true],
         'subscription.invoice_paid'           => ['email' => true,  'sms' => true,  'push' => true],
+        'subscription.renewal_upcoming'       => ['email' => true,  'sms' => true,  'push' => true],
 
         // Reviews — informational, no SMS
         'review.received'                     => ['email' => true,  'sms' => false, 'push' => true],

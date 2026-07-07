@@ -231,6 +231,7 @@
     <x-nav-link-dashboard :href="route('admin.subscription_plans.index')" :active="request()->routeIs('admin.subscription_plans.*')" icon="briefcase">{{ __('layout/dashboard.nav.plans') }}</x-nav-link-dashboard>
     <x-nav-link-dashboard :href="route('admin.coupons.index')" :active="request()->routeIs('admin.coupons.*')" icon="list">{{ __('layout/dashboard.nav.coupons') }}</x-nav-link-dashboard>
     <x-nav-link-dashboard :href="route('admin.currencies.index')" :active="request()->routeIs('admin.currencies.*')" icon="currency">{{ __('layout/dashboard.nav.currencies') }}</x-nav-link-dashboard>
+    <x-nav-link-dashboard :href="route('admin.referrals.index')" :active="request()->routeIs('admin.referrals.*')" icon="users">Referral Payouts</x-nav-link-dashboard>
 
     <p class="px-3 mt-5 mb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">{{ __('layout/dashboard.nav.content') }}</p>
     <x-nav-link-dashboard :href="route('admin.banners.index')" :active="request()->routeIs('admin.banners.*')" icon="image">{{ __('layout/dashboard.nav.banners') }}</x-nav-link-dashboard>
@@ -287,6 +288,7 @@
 
     <p class="px-3 mt-5 mb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">{{ __('layout/dashboard.nav.account') }}</p>
     <x-nav-link-dashboard :href="route('provider.subscription.index')" :active="request()->routeIs('provider.subscription.*')" icon="briefcase">{{ __('layout/dashboard.nav.subscription') }}</x-nav-link-dashboard>
+    <x-nav-link-dashboard :href="route('provider.wallet.index')" :active="request()->routeIs('provider.wallet.*')" icon="currency">Wallet</x-nav-link-dashboard>
     <x-nav-link-dashboard :href="route('provider.affiliate.index')" :active="request()->routeIs('provider.affiliate.*')" icon="users">{{ __('layout/dashboard.nav.affiliate') }}</x-nav-link-dashboard>
     <x-nav-link-dashboard :href="route('provider.analytics.index')" :active="request()->routeIs('provider.analytics.*')" icon="bar-chart">{{ __('layout/dashboard.nav.analytics') }}</x-nav-link-dashboard>
     <x-nav-link-dashboard :href="route('provider.tickets.index')" :active="request()->routeIs('provider.tickets.*')" icon="help">{{ __('layout/dashboard.nav.support_tickets') }}</x-nav-link-dashboard>

@@ -51,6 +51,7 @@ class CurrencyController extends Controller implements HasMiddleware
             'name' => 'required|string|max:255',
             'symbol' => 'required|string|max:10',
             'status' => 'required|in:active,inactive',
+            'affiliate_commission_cap' => 'nullable|numeric|min:0',
         ]);
 
         Currency::create($request->all());
@@ -69,6 +70,7 @@ class CurrencyController extends Controller implements HasMiddleware
             'name' => 'required|string|max:255',
             'symbol' => 'required|string|max:10',
             'status' => 'required|in:active,inactive',
+            'affiliate_commission_cap' => 'nullable|numeric|min:0',
         ]);
 
         $currency->update($request->all());

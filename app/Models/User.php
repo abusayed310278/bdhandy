@@ -167,6 +167,19 @@ class User extends Authenticatable implements MustVerifyEmail
             ->first();
     }
 
+    public function pastDueSubscription(): ?Subscription
+    {
+        return $this->subscriptions()
+            ->where('subscription_status', 'past_due')
+            ->latest()
+            ->first();
+    }
+
+    public function walletTransactions()
+    {
+        return $this->hasMany(WalletTransaction::class);
+    }
+
     public function getSubscriptionPlanAttribute(): ?SubscriptionPlan
     {
         return $this->activeSubscription()?->plan;

@@ -11,10 +11,20 @@ class PaymentTransactionObserver
 {
     public function __construct(private NotificationService $notifier) {}
 
+    public function created(PaymentTransaction $transaction): void
+    {
+        $this->handle($transaction);
+    }
+
     public function updated(PaymentTransaction $transaction): void
     {
         if (!$transaction->isDirty('status')) return;
 
+        $this->handle($transaction);
+    }
+
+    private function handle(PaymentTransaction $transaction): void
+    {
         $user = $transaction->user;
         if (!$user) return;
 

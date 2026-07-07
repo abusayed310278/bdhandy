@@ -3,19 +3,24 @@
 namespace App\Http\Controllers\Provider;
 
 use App\Http\Controllers\Controller;
-use App\Models\AffiliateSystem;
-use App\Models\Referral;
 use App\Models\Subscription;
 use App\Models\SubscriptionPlan;
-use App\Models\User;
+use App\Services\SubscriptionBillingService;
+use App\Services\WalletService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
 
 class SubscriptionCheckoutController extends Controller
 {
+    public function __construct(
+        private WalletService $wallet,
+        private SubscriptionBillingService $billing,
+    ) {}
+
     public function checkout(Request $request): RedirectResponse
     {
         $request->validate(['plan_id' => ['required', 'exists:subscription_plans,id']]);
@@ -25,25 +30,23 @@ class SubscriptionCheckoutController extends Controller
 
         // Free plan — activate immediately, no Stripe
         if ($plan->price <= 0) {
-            $endDate = $plan->duration_months > 0 ? now()->addMonths($plan->duration_months) : null;
-
-            Subscription::updateOrCreate(
-                ['provider_id' => $user->id],
-                [
-                    'plan_id'             => $plan->id,
-                    'start_date'          => now(),
-                    'end_date'            => $endDate,
-                    'subscription_status' => 'active',
-                    'payment_status'      => 'paid',
-                    'auto_renew'          => false,
-                ]
-            );
+            $this->billing->activateFree($user, $plan);
 
             return redirect()->route('provider.dashboard')
                 ->with('success', "You're now on the {$plan->name} plan.");
         }
 
-        // Paid plan — create Stripe Checkout Session
+        // Enough wallet balance — activate/switch instantly, no Stripe.
+        // Covers upgrades, downgrades, and renewals paid from balance.
+        if ($this->wallet->hasSufficientBalance($user, $plan->price)) {
+            $this->billing->activatePaid($user, $plan, 'wallet', 'WALLET-' . Str::uuid());
+
+            return redirect()->route('provider.dashboard')
+                ->with('success', "You're now on the {$plan->name} plan.");
+        }
+
+        // Insufficient balance — direct payment via Stripe (first purchase,
+        // or topping the shortfall for an upgrade/downgrade).
         Stripe::setApiKey(config('services.stripe.secret'));
 
         $session = Session::create([
@@ -103,23 +106,9 @@ class SubscriptionCheckoutController extends Controller
                 ->with('error', 'Payment was not completed. Please try again.');
         }
 
-        $plan    = SubscriptionPlan::findOrFail($planId);
-        $endDate = $plan->duration_months > 0 ? now()->addMonths($plan->duration_months) : null;
+        $plan = SubscriptionPlan::findOrFail($planId);
 
-        $subscription = Subscription::updateOrCreate(
-            ['provider_id' => $user->id],
-            [
-                'plan_id'                    => $plan->id,
-                'stripe_checkout_session_id' => $session->id,
-                'start_date'                 => now(),
-                'end_date'                   => $endDate,
-                'subscription_status'        => 'active',
-                'payment_status'             => 'paid',
-                'auto_renew'                 => false,
-            ]
-        );
-
-        $this->creditAffiliate($user, $plan, $subscription);
+        $this->billing->activatePaid($user, $plan, 'stripe', $session->payment_intent ?? $session->id);
 
         return redirect()->route('provider.dashboard')
             ->with('success', "Payment successful! You're now on the {$plan->name} plan.");
@@ -129,37 +118,5 @@ class SubscriptionCheckoutController extends Controller
     {
         return redirect()->route('provider.subscription.index')
             ->with('info', 'Checkout cancelled. Choose a plan when you\'re ready.');
-    }
-
-    private function creditAffiliate(User $user, SubscriptionPlan $plan, Subscription $subscription): void
-    {
-        if (!$user->referred_by) {
-            return;
-        }
-
-        // Only credit once per referred user
-        if (Referral::where('referred_user_id', $user->id)->exists()) {
-            return;
-        }
-
-        $affiliateSystem = AffiliateSystem::where('referral_code', $user->referred_by)
-            ->where('status', 'active')
-            ->first();
-
-        if (!$affiliateSystem) {
-            return;
-        }
-
-        $commission = round($plan->price * 0.50, 2);
-
-        Referral::create([
-            'affiliate_id'      => $affiliateSystem->id,
-            'referred_user_id'  => $user->id,
-            'subscription_id'   => $subscription->id,
-            'commission_amount' => $commission,
-            'commission_status' => 'pending',
-        ]);
-
-        $affiliateSystem->increment('total_earnings', $commission);
     }
 }

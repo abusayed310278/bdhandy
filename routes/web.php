@@ -75,6 +75,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return redirect()->route('customer.dashboard');
     })->name('dashboard');
 
+    
+
     // ──────────────────────────────────────────────
     // Customer
     // ──────────────────────────────────────────────
@@ -153,6 +155,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 ->name('subscription.checkout.success');
             Route::get('/subscription/cancel', [App\Http\Controllers\Provider\SubscriptionCheckoutController::class, 'cancel'])
                 ->name('subscription.checkout.cancel');
+
+            // Wallet — accessible even when past_due, so a provider can top up to regain access
+            Route::get('/wallet', [App\Http\Controllers\Provider\WalletController::class, 'index'])
+                ->name('wallet.index');
+            Route::post('/wallet/topup', [App\Http\Controllers\Provider\WalletController::class, 'topup'])
+                ->name('wallet.topup');
+            Route::get('/wallet/topup/success', [App\Http\Controllers\Provider\WalletController::class, 'success'])
+                ->name('wallet.topup.success');
 
             // All provider pages behind active subscription
             Route::middleware('provider.subscription')->group(function () {
@@ -271,6 +281,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('subscription_plans', App\Http\Controllers\Admin\SubscriptionPlanController::class);
         Route::resource('coupons',            App\Http\Controllers\Admin\CouponController::class);
         Route::resource('languages',          App\Http\Controllers\Admin\LanguageController::class);
+
+        // Affiliate Referral Payouts (non-provider affiliates only — providers are auto-credited to wallet)
+        Route::get('referrals', [App\Http\Controllers\Admin\ReferralController::class, 'index'])->name('referrals.index');
+        Route::post('referrals/{referral}/mark-paid', [App\Http\Controllers\Admin\ReferralController::class, 'markPaid'])->name('referrals.mark_paid');
 
         Route::get('settings',  [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
         Route::post('settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
