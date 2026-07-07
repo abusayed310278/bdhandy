@@ -60,6 +60,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         )->orderBy('name')->get(['id', 'name', 'latitude', 'longitude']))->name('areas');
     });
 
+
+    
+
     // Central dispatcher — routes each role to its own dashboard
     Route::get('/dashboard', function () {
         $user = auth()->user();
@@ -75,7 +78,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return redirect()->route('customer.dashboard');
     })->name('dashboard');
 
-    
+
 
     // ──────────────────────────────────────────────
     // Customer
