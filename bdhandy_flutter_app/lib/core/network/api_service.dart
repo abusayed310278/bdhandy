@@ -178,7 +178,16 @@ class ApiService {
     required String currentPassword,
     required String newPassword,
     required String newPasswordConfirmation,
-  }) => _mockResponse({'success': true});
+  }) {
+    return _dio.post(
+      ApiEndpoints.changePassword,
+      data: {
+        'current_password': currentPassword,
+        'password': newPassword,
+        'password_confirmation': newPasswordConfirmation,
+      },
+    );
+  }
 
   Future<Response> getTickets() => _mockResponse({'success': true, 'data': []});
   Future<Response> createTicket({

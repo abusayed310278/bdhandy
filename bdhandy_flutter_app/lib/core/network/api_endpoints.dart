@@ -9,7 +9,7 @@ class ApiEndpoints {
   static const String contact = 'contact';
   static const String privacyPolicy = 'privacy-policy';
   static const String termsConditions = 'terms-conditions';
-  static const String changePassword = 'profile/change-password';
+  static const String changePassword = 'change-password';
   static const String tickets = 'tickets';
   static const String countries = 'countries';
   static const String updateProfile = 'profile/update';
