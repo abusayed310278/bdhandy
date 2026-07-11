@@ -13,6 +13,7 @@ import 'privacy_policy_screen_view.dart';
 import 'signup_screen_view.dart';
 import 'terms_and_conditions_screen_view.dart';
 import 'change_password_screen_view.dart';
+import 'edit_profile_screen_view.dart';
 import 'safety_center_screen.dart';
 import 'how_it_works_screen.dart';
 import 'support_tickets_screen_view.dart';
@@ -330,6 +331,7 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
                                 ? ClipOval(
                                     child: Image.network(
                                       '${ApiService.mediaBaseUrl}$photo',
+                                      headers: const {'Host': 'bdhandy.test'},
                                       width: 88,
                                       height: 88,
                                       fit: BoxFit.cover,
@@ -396,7 +398,9 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
                       ],
                       const SizedBox(height: 14),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          Get.to(() => const EditProfileScreenView());
+                        },
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 20,

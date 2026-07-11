@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../controller/home_controller.dart';
 import 'notification_screen.dart';
 import 'package:bdhandy_flutter_app/feature/provider/presentation/view/all_providers_screen.dart';
+import '../../../../core/network/api_service.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -67,38 +68,49 @@ class HomeScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: const [
-                  CircleAvatar(
-                    radius: 24,
-                    backgroundColor: Colors.white24,
-                    child: Icon(Icons.person, color: Colors.white),
-                  ),
-                  SizedBox(width: 12),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Hi, User 👋',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+              Obx(() {
+                final userData = Get.find<HomeController>().userData.value;
+                final photo = userData?['photo'] as String?;
+                final name = userData?['name'] as String? ?? 'User';
+                
+                return Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 24,
+                      backgroundColor: Colors.white24,
+                      backgroundImage: (photo != null && photo.isNotEmpty)
+                          ? NetworkImage('${ApiService.mediaBaseUrl}$photo', headers: const {'Host': 'bdhandy.test'})
+                          : null,
+                      child: (photo == null || photo.isEmpty)
+                          ? const Icon(Icons.person, color: Colors.white)
+                          : null,
+                    ),
+                    const SizedBox(width: 12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Hi, $name 👋',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
                       SizedBox(height: 4),
-                      Text(
-                        'What service do you need?',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
+                        const Text(
+                          'What service do you need?',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                      ],
+                    ),
+                  ],
+                );
+              }),
               GestureDetector(
                 onTap: () => Get.to(() => const NotificationScreen()),
                 child: Stack(

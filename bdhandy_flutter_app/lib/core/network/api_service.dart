@@ -9,7 +9,7 @@ import 'api_endpoints.dart';
 
 class ApiService {
   static const String baseUrlStr = 'https://bdhandy.test/api/';
-  static String get mediaBaseUrl => baseUrlStr.replaceAll('api/', '');
+  static String get mediaBaseUrl => 'https://10.0.2.2'; // No trailing slash since photo path has leading slash
 
   late Dio _dio;
 
@@ -218,24 +218,19 @@ class ApiService {
     String? contact,
     String? dob,
     String? gender,
-    String? address,
-    int? countryId,
-    int? stateId,
-    int? cityId,
+    String? bio,
     String? photoPath,
-  }) => _mockResponse({
-    'success': true,
-    'data': {
-      'user': {
-        'name': name,
-        'contact': contact,
-        'dob': dob,
-        'gender': gender,
-        'address': address,
-        'photo': photoPath,
-      },
-    },
-  });
+  }) async {
+    final formData = FormData.fromMap({
+      'name': name,
+      if (contact != null) 'phone': contact,
+      if (dob != null) 'dob': dob,
+      if (gender != null) 'gender': gender,
+      if (bio != null) 'bio': bio,
+      if (photoPath != null) 'photo': await MultipartFile.fromFile(photoPath),
+    });
+    return _dio.post(ApiEndpoints.updateProfile, data: formData);
+  }
 
   final _dummyBranches = [
     {
