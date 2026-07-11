@@ -33,14 +33,12 @@ class _ForgotPasswordScreenViewState extends State<ForgotPasswordScreenView> {
         final response = await apiService.sendResetOtp(emailCtrl.text.trim());
         if (response.statusCode == 200 && response.data != null) {
           final body = response.data;
-          if (body['success'] == true) {
-            CustomSnackbar.showSuccess(
-              title: 'OTP Sent',
-              message: body['message'] ?? 'Check your email for the reset code.',
-            );
-            Get.to(() => OtpVerificationScreenView(email: emailCtrl.text.trim()));
-            return;
-          }
+          CustomSnackbar.showSuccess(
+            title: 'OTP Sent',
+            message: body['message'] ?? 'Check your email for the reset code.',
+          );
+          Get.to(() => OtpVerificationScreenView(email: emailCtrl.text.trim()));
+          return;
         }
         
         CustomSnackbar.showError(message: 'Failed to send OTP. Please check your email.');

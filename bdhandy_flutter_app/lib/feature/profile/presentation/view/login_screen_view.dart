@@ -36,32 +36,43 @@ class _LoginScreenViewState extends State<LoginScreenView> {
   void _login() async {
     if (formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
-      // Simulate API delay
-      await Future.delayed(const Duration(seconds: 1));
-
-      if (emailCtrl.text.trim() == 'a@gmail.com' && passwordCtrl.text == '11111111') {
-        // Save dummy session
-        final dummyUserData = {
-          'id': 1,
-          'name': 'Demo User',
-          'email': 'a@gmail.com',
-          'contact': '1234567890',
-        };
-        await SessionManager.saveSession('dummy_token_123', dummyUserData);
-        Get.find<HomeController>().updateUserData(dummyUserData);
-
-        CustomSnackbar.showSuccess(
-          title: 'Login Successful',
-          message: 'Welcome back!',
-        );
-        Get.find<HomeController>().currentIndex.value = 0;
-        Get.offAll(() => const AppGroundView());
-      } else {
-        CustomSnackbar.showError(message: 'Invalid email or password.');
-      }
       
-      if (mounted) {
-        setState(() => _isLoading = false);
+      try {
+        final apiService = Get.find<ApiService>();
+        final response = await apiService.login(emailCtrl.text.trim(), passwordCtrl.text);
+        
+        if (response.statusCode == 200 && response.data != null) {
+          final data = response.data;
+          if (data['token'] != null) {
+            await SessionManager.saveSession(data['token'], data['user'] ?? {});
+            try {
+                Get.find<HomeController>().updateUserData(data['user'] ?? {});
+            } catch(e) { /* ignore if not found */ }
+
+            CustomSnackbar.showSuccess(
+              title: 'Login Successful',
+              message: 'Welcome back!',
+            );
+            try {
+                Get.find<HomeController>().currentIndex.value = 0;
+            } catch(e) { /* ignore if not found */ }
+            Get.offAll(() => const AppGroundView());
+            return;
+          }
+        }
+        CustomSnackbar.showError(message: 'Invalid email or password.');
+      } on DioException catch (e) {
+        String msg = 'Invalid email or password.';
+        if (e.response?.data != null && e.response!.data['message'] != null) {
+          msg = e.response!.data['message'];
+        }
+        CustomSnackbar.showError(message: msg);
+      } catch (e) {
+        CustomSnackbar.showError(message: 'Connection error. Please try again.');
+      } finally {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
       }
     }
   }
