@@ -49,7 +49,7 @@ class BdhandyApp extends StatelessWidget {
         useMaterial3: true,
         fontFamily: 'Poppins',
       ),
-      home: const SplashScreen(),
+      home: SessionManager.isLoggedIn() ? const AppGroundView() : const SplashScreen(),
     );
   }
 }
