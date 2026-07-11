@@ -81,7 +81,19 @@ class ApiService {
     required String name,
     String? contact, String? dob, String? gender, String? address,
     int? countryId, int? stateId, int? cityId, String? photoPath,
-  }) => _mockResponse({'success': true});
+  }) => _mockResponse({
+    'success': true, 
+    'data': {
+      'user': {
+        'name': name,
+        'contact': contact,
+        'dob': dob,
+        'gender': gender,
+        'address': address,
+        'photo': photoPath,
+      }
+    }
+  });
 
   final _dummyBranches = [
     {

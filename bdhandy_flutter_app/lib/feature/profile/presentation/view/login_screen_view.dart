@@ -35,7 +35,21 @@ class _LoginScreenViewState extends State<LoginScreenView> {
 
   void _login() async {
     if (formKey.currentState!.validate()) {
+      setState(() => _isLoading = true);
+      // Simulate API delay
+      await Future.delayed(const Duration(seconds: 1));
+
       if (emailCtrl.text.trim() == 'a@gmail.com' && passwordCtrl.text == '11111111') {
+        // Save dummy session
+        final dummyUserData = {
+          'id': 1,
+          'name': 'Demo User',
+          'email': 'a@gmail.com',
+          'contact': '1234567890',
+        };
+        await SessionManager.saveSession('dummy_token_123', dummyUserData);
+        Get.find<HomeController>().updateUserData(dummyUserData);
+
         CustomSnackbar.showSuccess(
           title: 'Login Successful',
           message: 'Welcome back!',
@@ -44,6 +58,10 @@ class _LoginScreenViewState extends State<LoginScreenView> {
         Get.offAll(() => const AppGroundView());
       } else {
         CustomSnackbar.showError(message: 'Invalid email or password.');
+      }
+      
+      if (mounted) {
+        setState(() => _isLoading = false);
       }
     }
   }

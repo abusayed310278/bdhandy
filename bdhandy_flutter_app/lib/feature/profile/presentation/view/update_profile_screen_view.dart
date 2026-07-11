@@ -325,11 +325,13 @@ class _UpdateProfileScreenViewState extends State<UpdateProfileScreenView> {
           data = jsonDecode(data);
         }
         if (data['success'] == true) {
-          final updatedUser = data['data']['user'];
+          final updatedUser = data['data']['user'] as Map<String, dynamic>;
 
           // Save and propagate new session data instantly
           Get.find<HomeController>().updateUserData(updatedUser);
-          ProfileScreenView.userData = updatedUser;
+
+          // final token = SessionManager.getToken() ?? '';
+          // await SessionManager.saveSession(token, updatedUser);
 
           Get.back();
           CustomSnackbar.showSuccess(

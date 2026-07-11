@@ -13,6 +13,12 @@ import 'privacy_policy_screen_view.dart';
 import 'signup_screen_view.dart';
 import 'terms_and_conditions_screen_view.dart';
 import 'change_password_screen_view.dart';
+import 'safety_center_screen.dart';
+import 'how_it_works_screen.dart';
+import 'support_tickets_screen_view.dart';
+import 'my_addresses_screen.dart';
+import 'my_reviews_screen.dart';
+import 'my_requests_screen.dart';
 import '../../../home/presentation/controller/home_controller.dart';
 import '../../../../core/network/api_service.dart';
 import '../../../../core/network/session_manager.dart';
@@ -21,40 +27,11 @@ import '../../../../core/common/widgets/custom_snackbar.dart';
 class ProfileScreenView extends StatefulWidget {
   const ProfileScreenView({super.key});
 
-  static bool isLoggedIn = false;
-  static String? userToken;
-  static Map<String, dynamic>? userData;
-
   @override
   State<ProfileScreenView> createState() => _ProfileScreenViewState();
 }
 
 class _ProfileScreenViewState extends State<ProfileScreenView> {
-  // Toggle this to simulate login/logout state.
-  // Replace with real auth state (e.g. GetX AuthController) later.
-  bool get _isLoggedIn => ProfileScreenView.userToken != null;
-  set _isLoggedIn(bool val) {
-    if (!val) {
-      ProfileScreenView.userToken = null;
-      ProfileScreenView.userData = null;
-      try {
-        Get.find<ApiService>().setToken(null);
-      } catch (_) {}
-      // Clear persistent storage
-      SessionManager.clearSession();
-    } else {
-      ProfileScreenView.isLoggedIn = true;
-    }
-  }
-
-  // ── Login handler ──────────────────────────────────────────────
-  void _handleLogin(String email, String password) {
-    // TODO: call real auth API here
-    if (email.isNotEmpty && password.isNotEmpty) {
-      setState(() => _isLoggedIn = true);
-    }
-  }
-
   // ── Logout dialog ──────────────────────────────────────────────
   void _showLogoutDialog(BuildContext context) {
     showDialog(
@@ -142,20 +119,16 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
                     child: ElevatedButton(
                       onPressed: () async {
                         Navigator.of(context).pop();
-                        setState(() => _isLoggedIn = false);
+
+                        // Clear session
+                        await SessionManager.clearSession();
+                        Get.find<HomeController>().updateUserData(null);
+
                         CustomSnackbar.showSuccess(
                           title: 'Logged Out',
                           message: 'Logged out successfully',
                         );
-                        final result = await Get.to(
-                          () => const LoginScreenView(),
-                        );
-                        if (result == true) {
-                          setState(() {
-                            _isLoggedIn = true;
-                          });
-                          Get.find<HomeController>().currentIndex.value = 0;
-                        }
+                        Get.find<HomeController>().currentIndex.value = 0;
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColor.error,
@@ -196,7 +169,10 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
   // ─────────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
-    return _isLoggedIn ? _buildProfile() : _buildLoggedOutProfile();
+    return Obx(() {
+      final isLoggedIn = Get.find<HomeController>().userData.value != null;
+      return isLoggedIn ? _buildProfile() : _buildLoggedOutProfile();
+    });
   }
 
   // ─────────────────────────────────────────────────────────────────────
@@ -257,17 +233,8 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
                     SizedBox(
                       width: 200,
                       child: ElevatedButton(
-                        onPressed: () async {
-                          final result = await Get.to(
-                            () => const LoginScreenView(),
-                          );
-                          if (result == true) {
-                            setState(() {
-                              _isLoggedIn = true;
-                            });
-                            // Switch tab to Home Screen
-                            Get.find<HomeController>().currentIndex.value = 0;
-                          }
+                        onPressed: () {
+                          Get.to(() => const LoginScreenView());
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColor.primary,
@@ -475,7 +442,7 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
                         icon: Icons.calendar_month_outlined,
                         iconColor: AppColor.primary,
                         iconBg: AppColor.primaryLight,
-                        label: 'My Bookings',
+                        label: 'My Requests',
                         onTap: () {
                           Get.find<HomeController>().currentIndex.value = 1;
                         },
@@ -539,16 +506,30 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
                   onTap: () => Get.to(() => const SavedSalonsScreen()),
                 ),
                 _divider(),
-
                 _MenuItem(
-                  icon: Icons.featured_play_list_outlined,
-                  iconColor: const Color(0xFF06B6D4),
-                  iconBg: const Color(0xFFCFFAFE),
-                  label: 'Features',
-                  onTap: () {
-                    // Get.to(() => const FeaturesScreenView());
-                  },
+                  icon: Icons.location_on_outlined,
+                  iconColor: const Color(0xFF0D9488),
+                  iconBg: const Color(0xFFCCFBF1),
+                  label: 'My Addresses',
+                  onTap: () => Get.to(() => const MyAddressesScreen()),
                 ),
+                _divider(),
+                _MenuItem(
+                  icon: Icons.star_border,
+                  iconColor: const Color(0xFFF59E0B),
+                  iconBg: const Color(0xFFFEF3C7),
+                  label: 'My Reviews',
+                  onTap: () => Get.to(() => const MyReviewsScreen()),
+                ),
+                _divider(),
+                _MenuItem(
+                  icon: Icons.assignment_outlined,
+                  iconColor: const Color(0xFF8B5CF6),
+                  iconBg: const Color(0xFFEDE9FE),
+                  label: 'My Requirements',
+                  onTap: () => Get.to(() => const MyRequestsScreen()),
+                ),
+                _divider(),
               ],
             ),
           ),
@@ -580,18 +561,29 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
                   label: 'About Us',
                   onTap: () => Get.to(() => const AboutUsScreenView()),
                 ),
-                if (isLoggedIn) ...[
-                  _divider(),
-                  _MenuItem(
-                    icon: Icons.confirmation_number_outlined,
-                    iconColor: const Color(0xFF10B981),
-                    iconBg: const Color(0xFFD1FAE5),
-                    label: 'Tickets',
-                    onTap: () {
-                      // Get.to(() => const TicketsListScreenView());
-                    },
-                  ),
-                ],
+                _divider(),
+                _MenuItem(
+                  icon: Icons.shield_outlined,
+                  iconColor: Colors.orange,
+                  iconBg: Colors.orange.shade50,
+                  label: 'Safety Center',
+                  onTap: () => Get.to(() => const SafetyCenterScreen()),
+                ),
+                _divider(),
+                _MenuItem(
+                  icon: Icons.lightbulb_outline,
+                  iconColor: Colors.amber,
+                  iconBg: Colors.amber.shade50,
+                  label: 'How it Works',
+                  onTap: () => Get.to(() => const HowItWorksScreen()),
+                ),
+                _MenuItem(
+                  icon: Icons.confirmation_number_outlined,
+                  iconColor: const Color(0xFF10B981),
+                  iconBg: const Color(0xFFD1FAE5),
+                  label: 'Support Tickets',
+                  onTap: () => Get.to(() => const SupportTicketsScreenView()),
+                ),
                 _divider(),
                 _MenuItem(
                   icon: Icons.headset_mic_outlined,

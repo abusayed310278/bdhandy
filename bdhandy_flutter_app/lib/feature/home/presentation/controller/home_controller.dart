@@ -15,6 +15,7 @@ class HomeController extends GetxController {
   final customerReviews = <Map<String, dynamic>>[].obs;
   final apiCategories = <Map<String, dynamic>>[].obs;
   final nearbySalons = <Salon>[].obs;
+  final notificationsList = <Map<String, dynamic>>[].obs;
   final unreadNotificationsCount = 0.obs;
 
   final searchResults = <Salon>[].obs;
@@ -120,6 +121,7 @@ class HomeController extends GetxController {
         if (data['success'] == true) {
           final List<dynamic> notifs =
               data['data']['notifications']['data'] ?? [];
+          notificationsList.assignAll(notifs.map((n) => n as Map<String, dynamic>).toList());
           final int count = notifs.where((n) => n['is_read'] == 0).length;
           unreadNotificationsCount.value = count;
         }

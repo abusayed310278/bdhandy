@@ -18,17 +18,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       "title": "Find Professionals\nNear You",
       "description":
           "Electricians, plumbers, cleaners\nand more at your service",
-      "image": "assets/images/handyman.png",
+      "image": "assets/images/professional.png",
     },
     {
       "title": "Trusted & Verified",
       "description": "All providers are background\nchecked & reviewed",
-      "image": "assets/images/handyman.png",
+      "image": "assets/images/verified.png",
     },
     {
       "title": "Book Service Easily",
       "description": "Get your job done quickly\nand hassle free",
-      "image": "assets/images/handyman.png",
+      "image": "assets/images/book.png",
     },
   ];
 
@@ -103,9 +103,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             ),
                             Positioned(
                               bottom: 20,
+                              left: 20,
+                              right: 20,
                               child: Image.asset(
                                 _onboardingData[index]["image"]!,
-                                height: 350,
+                                fit: BoxFit.contain,
                                 errorBuilder: (context, error, stackTrace) =>
                                     const Icon(Icons.person,
                                         size: 200, color: Colors.grey),

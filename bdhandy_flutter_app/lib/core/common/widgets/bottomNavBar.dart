@@ -14,10 +14,26 @@ class BottomNavBar extends StatelessWidget {
 
   static const List<_NavItem> _items = [
     _NavItem(label: 'Home', icon: Icons.home_outlined, activeIcon: Icons.home),
-    _NavItem(label: 'Search', icon: Icons.search_outlined, activeIcon: Icons.search),
-    _NavItem(label: 'Bookings', icon: Icons.calendar_today_outlined, activeIcon: Icons.calendar_today),
-    _NavItem(label: 'Chat', icon: Icons.chat_bubble_outline, activeIcon: Icons.chat_bubble),
-    _NavItem(label: 'Profile', icon: Icons.person_outline, activeIcon: Icons.person),
+    _NavItem(
+      label: 'Search',
+      icon: Icons.search_outlined,
+      activeIcon: Icons.search,
+    ),
+    _NavItem(
+      label: 'Requests',
+      icon: Icons.calendar_today_outlined,
+      activeIcon: Icons.calendar_today,
+    ),
+    _NavItem(
+      label: 'Chat',
+      icon: Icons.chat_bubble_outline,
+      activeIcon: Icons.chat_bubble,
+    ),
+    _NavItem(
+      label: 'Profile',
+      icon: Icons.person_outline,
+      activeIcon: Icons.person,
+    ),
   ];
 
   @override
@@ -25,9 +41,7 @@ class BottomNavBar extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border(
-          top: BorderSide(color: AppColor.divider, width: 1),
-        ),
+        border: Border(top: BorderSide(color: AppColor.divider, width: 1)),
         boxShadow: [
           BoxShadow(
             color: const Color(0xFF6C3EE8).withOpacity(0.06),
@@ -70,16 +84,22 @@ class BottomNavBar extends StatelessWidget {
                           child: Icon(
                             isSelected ? item.activeIcon : item.icon,
                             size: 22,
-                            color: isSelected ? AppColor.navActive : AppColor.navInactive,
+                            color: isSelected
+                                ? AppColor.navActive
+                                : AppColor.navInactive,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           item.label,
                           style: GoogleFonts.poppins(
-                            color: isSelected ? AppColor.navActive : AppColor.navInactive,
+                            color: isSelected
+                                ? AppColor.navActive
+                                : AppColor.navInactive,
                             fontSize: 11,
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.w400,
                           ),
                         ),
                       ],
