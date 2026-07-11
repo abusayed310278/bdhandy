@@ -6,6 +6,7 @@ import '../../../../core/colors/app_color.dart';
 import '../../../../core/common/widgets/custom_snackbar.dart';
 
 import '../../../../core/network/api_service.dart';
+import 'login_screen_view.dart';
 
 class ResetPasswordScreenView extends StatefulWidget {
   final String email;
@@ -46,14 +47,13 @@ class _ResetPasswordScreenViewState extends State<ResetPasswordScreenView> {
         );
         if (response.statusCode == 200 && response.data != null) {
           final body = response.data;
-          if (body['success'] == true) {
-            CustomSnackbar.showSuccess(
-              title: 'Password Changed',
-              message: body['message'] ?? 'Your password has been successfully reset.',
-            );
-            Get.close(3);
-            return;
-          }
+          // Backend returns status 200 on success, we don't strictly need body['success'] == true
+          CustomSnackbar.showSuccess(
+            title: 'Password Changed',
+            message: body['message'] ?? 'Your password has been successfully reset.',
+          );
+          Get.offAll(() => const LoginScreenView());
+          return;
         }
         
         CustomSnackbar.showError(message: 'Password reset failed. Please try again.');

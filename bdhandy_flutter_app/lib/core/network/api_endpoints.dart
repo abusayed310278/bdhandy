@@ -1,8 +1,8 @@
 class ApiEndpoints {
   static const String login = 'login';
   static const String register = 'register';
-  static const String passwordEmail = 'password/email';
-  static const String passwordReset = 'password/reset';
+  static const String passwordEmail = 'forgot-password';
+  static const String passwordReset = 'reset-password';
   static const String howItWorks = 'how-it-works';
   static const String features = 'features';
   static const String aboutUs = 'about';

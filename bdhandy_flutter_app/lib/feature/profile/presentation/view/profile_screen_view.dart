@@ -129,6 +129,9 @@ class _ProfileScreenViewState extends State<ProfileScreenView> {
                           message: 'Logged out successfully',
                         );
                         Get.find<HomeController>().currentIndex.value = 0;
+                        
+                        // Go to Login Screen
+                        Get.to(() => const LoginScreenView());
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColor.error,
