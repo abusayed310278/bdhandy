@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Mail\WelcomeMail;
+use App\Mail\RegistrationOtpMail;
 use App\Models\User;
+use App\Models\OtpCode;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -44,7 +45,16 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        Mail::to($user->email)->queue(new WelcomeMail($user));
+        $otp = (string) rand(1000, 9999);
+        OtpCode::create([
+            'user_id' => $user->id,
+            'phone' => $user->phone,
+            'code' => $otp,
+            'type' => 'registration',
+            'expires_at' => now()->addMinutes(10),
+        ]);
+
+        Mail::to($user->email)->queue(new RegistrationOtpMail($user, $otp));
 
         $token = $user->createToken('auth_token')->plainTextToken;
 

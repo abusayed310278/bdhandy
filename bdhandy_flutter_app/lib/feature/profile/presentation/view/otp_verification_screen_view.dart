@@ -8,12 +8,16 @@ import '../../../../core/common/widgets/custom_snackbar.dart';
 import '../../../../core/network/api_service.dart';
 import 'reset_password_screen_view.dart';
 
+import 'login_screen_view.dart';
+
 class OtpVerificationScreenView extends StatefulWidget {
   final String email;
+  final bool isRegistration;
 
   const OtpVerificationScreenView({
     super.key,
     required this.email,
+    this.isRegistration = false,
   });
 
   @override
@@ -42,7 +46,13 @@ class _OtpVerificationScreenViewState extends State<OtpVerificationScreenView> {
       CustomSnackbar.showError(message: 'Please enter all 4 digits of the OTP.');
       return;
     }
-    Get.to(() => ResetPasswordScreenView(email: widget.email, otp: code));
+    
+    if (widget.isRegistration) {
+      CustomSnackbar.showSuccess(title: 'Verified', message: 'Account verified successfully!');
+      Get.offAll(() => const LoginScreenView());
+    } else {
+      Get.to(() => ResetPasswordScreenView(email: widget.email, otp: code));
+    }
   }
 
   void _resendOtp() async {

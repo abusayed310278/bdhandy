@@ -6,6 +6,7 @@ import '../../../../core/colors/app_color.dart';
 import '../../../../core/common/widgets/custom_snackbar.dart';
 import '../../../../core/network/api_service.dart';
 import 'login_screen_view.dart';
+import 'otp_verification_screen_view.dart';
 
 class SignupScreenView extends StatefulWidget {
   const SignupScreenView({super.key});
@@ -48,16 +49,20 @@ class _SignupScreenViewState extends State<SignupScreenView> {
         );
         if ((response.statusCode == 200 || response.statusCode == 201) && response.data != null) {
           final body = response.data;
-          if (body['token'] != null) {
-            // Save token just like login if you want to automatically log them in
-            // Or just return to login screen
+          if (body['token'] != null || body['user'] != null) {
+            final registeredEmail = emailCtrl.text.trim();
+            
             nameCtrl.clear();
             emailCtrl.clear();
             phoneCtrl.clear();
             passwordCtrl.clear();
             confirmPasswordCtrl.clear();
 
-            Get.back(result: true);
+            // Go to OTP screen
+            Get.to(() => OtpVerificationScreenView(
+              email: registeredEmail,
+              isRegistration: true,
+            ));
             return;
           }
         }
