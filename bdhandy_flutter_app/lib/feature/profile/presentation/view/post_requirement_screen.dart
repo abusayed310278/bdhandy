@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../core/network/api_service.dart';
+import '../../../../feature/profile/presentation/view/my_requests_screen.dart';
 
 class PostRequirementScreen extends StatefulWidget {
   const PostRequirementScreen({super.key});
@@ -34,17 +36,49 @@ class _PostRequirementScreenState extends State<PostRequirementScreen> {
     super.dispose();
   }
 
-  void _submitRequirement() {
-    if (!_formKey.currentState!.validate()) return;
+  bool _isSubmitting = false;
 
-    Get.snackbar(
-      'Success',
-      'Requirement posted successfully',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.white,
-      colorText: Colors.black87,
-      margin: const EdgeInsets.all(14),
-    );
+  Future<void> _submitRequirement() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _isSubmitting = true);
+
+    try {
+      final apiService = Get.find<ApiService>();
+      final response = await apiService.postRequirement({
+         'title': titleController.text.trim(),
+         'description': descriptionController.text.trim(),
+         'category': selectedCategory,
+         'service': selectedService,
+         'urgency': urgencyLevel,
+         'preferred_date': preferredDateController.text.trim(),
+         'budget_type': budgetType,
+         'budget_amount': fixedBudgetController.text.trim(),
+         'currency': selectedCurrency,
+         'location_type': locationType,
+         'address': locationController.text.trim(),
+      });
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        Get.snackbar(
+          'Success',
+          'Requirement posted successfully',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        Get.off(() => const MyRequestsScreen());
+      }
+    } catch (e) {
+        Get.snackbar(
+          'Error',
+          'Failed to post requirement',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+    } finally {
+      setState(() => _isSubmitting = false);
+    }
   }
 
   InputDecoration _inputDecoration({
@@ -568,9 +602,11 @@ class _PostRequirementScreenState extends State<PostRequirementScreen> {
               Expanded(
                 flex: 2,
                 child: ElevatedButton.icon(
-                  onPressed: _submitRequirement,
-                  icon: const Icon(Icons.send_rounded, size: 18),
-                  label: const Text(
+                  onPressed: _isSubmitting ? null : _submitRequirement,
+                  icon: _isSubmitting ? const SizedBox.shrink() : const Icon(Icons.send_rounded, size: 18),
+                  label: _isSubmitting
+                    ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                    : const Text(
                     'Post Requirement',
                     style: TextStyle(
                       fontSize: 15,

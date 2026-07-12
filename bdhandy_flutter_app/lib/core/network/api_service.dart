@@ -149,29 +149,14 @@ class ApiService {
     );
   }
 
-  Future<Response> getHowItWorks() => _mockResponse({
-    'success': true,
-    'data': '<h2>How It Works</h2><p>Mock content</p>',
-  });
-  Future<Response> getFeatures() => _mockResponse({
-    'success': true,
-    'data': '<h2>Features</h2><p>Mock content</p>',
-  });
-  Future<Response> getAboutUs() => _mockResponse({
-    'success': true,
-    'data': '<h2>About Us</h2><p>Mock content</p>',
-  });
+  Future<Response> getHowItWorks() => _dio.get(ApiEndpoints.howItWorks);
+  Future<Response> getAboutUs() => _dio.get(ApiEndpoints.aboutUs);
+  Future<Response> getPrivacyPolicy() => _dio.get(ApiEndpoints.privacyPolicy);
+  Future<Response> getTermsConditions() => _dio.get(ApiEndpoints.termsConditions);
+  Future<Response> getSafetyCenter() => _dio.get(ApiEndpoints.safetyCenter);
   Future<Response> getContactInfo() => _mockResponse({
     'success': true,
     'data': '<h2>Contact</h2><p>Mock content</p>',
-  });
-  Future<Response> getPrivacyPolicy() => _mockResponse({
-    'success': true,
-    'data': '<h2>Privacy Policy</h2><p>Mock content</p>',
-  });
-  Future<Response> getTermsConditions() => _mockResponse({
-    'success': true,
-    'data': '<h2>Terms</h2><p>Mock content</p>',
   });
 
   Future<Response> changePassword({
@@ -189,18 +174,34 @@ class ApiService {
     );
   }
 
-  Future<Response> getTickets() => _mockResponse({'success': true, 'data': []});
+  Future<Response> getTickets() => _dio.get(ApiEndpoints.tickets);
+  
   Future<Response> createTicket({
     required String subject,
     required String details,
     String? attachmentPath,
-  }) => _mockResponse({'success': true});
+  }) async {
+    final formData = FormData.fromMap({
+      'subject': subject,
+      'description': details,
+      if (attachmentPath != null) 'attachment': await MultipartFile.fromFile(attachmentPath),
+    });
+    return _dio.post(ApiEndpoints.tickets, data: formData);
+  }
+
   Future<Response> submitContact({
     required String name,
     required String email,
     required String subject,
     required String message,
-  }) => _mockResponse({'success': true});
+  }) {
+    return _dio.post(ApiEndpoints.contact, data: {
+      'name': name,
+      'email': email,
+      'subject': subject,
+      'message': message,
+    });
+  }
 
   Future<Response> getCountries() =>
       _mockResponse({'success': true, 'data': []});
@@ -457,4 +458,16 @@ class ApiService {
   }) => _mockResponse({'success': true});
   Future<Response> markChatRead(int bookingId) =>
       _mockResponse({'success': true});
+
+  // User Data
+  Future<Response> getSavedProviders() => _dio.get(ApiEndpoints.savedProviders);
+  Future<Response> toggleSavedProvider(int providerId) => 
+      _dio.post(ApiEndpoints.toggleSavedProvider, data: {'provider_id': providerId});
+
+  Future<Response> getAddresses() => _dio.get(ApiEndpoints.addresses);
+  Future<Response> addAddress(Map<String, dynamic> data) => _dio.post(ApiEndpoints.addresses, data: data);
+  Future<Response> deleteAddress(int id) => _dio.delete('${ApiEndpoints.addresses}/$id');
+
+  Future<Response> getRequirements() => _dio.get(ApiEndpoints.requirements);
+  Future<Response> postRequirement(Map<String, dynamic> data) => _dio.post(ApiEndpoints.requirements, data: data);
 }

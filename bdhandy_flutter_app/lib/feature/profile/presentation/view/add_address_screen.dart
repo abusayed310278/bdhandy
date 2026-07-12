@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../core/network/api_service.dart';
+import '../../../../feature/profile/presentation/view/my_addresses_screen.dart';
 
 class AddAddressScreen extends StatefulWidget {
   const AddAddressScreen({super.key});
@@ -27,17 +29,42 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     super.dispose();
   }
 
-  void _submitAddress() {
-    if (!_formKey.currentState!.validate()) return;
+  bool _isSubmitting = false;
 
-    Get.snackbar(
-      'Success',
-      'Address added successfully',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.white,
-      colorText: Colors.black87,
-      margin: const EdgeInsets.all(14),
-    );
+  Future<void> _submitAddress() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _isSubmitting = true);
+
+    try {
+      final apiService = Get.find<ApiService>();
+      final response = await apiService.addAddress({
+         'label': labelController.text.trim(),
+         'address_type': selectedType,
+         'address': addressController.text.trim(),
+         'is_primary': false,
+      });
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        Get.snackbar(
+          'Success',
+          'Address added successfully',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        Get.off(() => const MyAddressesScreen());
+      }
+    } catch (e) {
+        Get.snackbar(
+          'Error',
+          'Failed to add address',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+    } finally {
+      setState(() => _isSubmitting = false);
+    }
   }
 
   InputDecoration _inputDecoration({
@@ -385,7 +412,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
               Expanded(
                 flex: 2,
                 child: ElevatedButton(
-                  onPressed: _submitAddress,
+                  onPressed: _isSubmitting ? null : _submitAddress,
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(54),
                     backgroundColor: const Color(0xff1D9BF0),
@@ -395,7 +422,9 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  child: const Text(
+                  child: _isSubmitting
+                    ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                    : const Text(
                     'Add Address',
                     style: TextStyle(
                       fontSize: 15,

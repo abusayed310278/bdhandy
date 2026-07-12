@@ -2,34 +2,43 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'add_address_screen.dart';
+import '../../../../core/network/api_service.dart';
 
-class MyAddressesScreen extends StatelessWidget {
+class MyAddressesScreen extends StatefulWidget {
   const MyAddressesScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Dummy address data
-    final List<Map<String, dynamic>> addresses = [
-      {
-        'title': 'Home',
-        'address': '123 Main Street, Apt 4B, New York, NY 10001',
-        'isDefault': true,
-        'icon': Icons.home_outlined,
-      },
-      {
-        'title': 'Office',
-        'address': '456 Business Blvd, Suite 200, New York, NY 10002',
-        'isDefault': false,
-        'icon': Icons.work_outline,
-      },
-      {
-        'title': 'Parents\' House',
-        'address': '789 Elm Street, Suburbia, NJ 07001',
-        'isDefault': false,
-        'icon': Icons.location_on_outlined,
-      },
-    ];
+  State<MyAddressesScreen> createState() => _MyAddressesScreenState();
+}
 
+class _MyAddressesScreenState extends State<MyAddressesScreen> {
+  bool _isLoading = true;
+  List<dynamic> _addresses = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchAddresses();
+  }
+
+  Future<void> _fetchAddresses() async {
+    try {
+      final apiService = Get.find<ApiService>();
+      final response = await apiService.getAddresses();
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        setState(() {
+          _addresses = response.data['data'] ?? [];
+        });
+      }
+    } catch (e) {
+      debugPrint('Error fetching addresses: $e');
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffF8FAFC),
       appBar: AppBar(
@@ -58,14 +67,16 @@ class MyAddressesScreen extends StatelessWidget {
           const SizedBox(width: 8),
         ],
       ),
-      body: addresses.isEmpty
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _addresses.isEmpty
           ? _buildEmptyState()
           : ListView.separated(
               padding: const EdgeInsets.all(16),
-              itemCount: addresses.length,
+              itemCount: _addresses.length,
               separatorBuilder: (context, index) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
-                final address = addresses[index];
+                final address = _addresses[index];
                 return _buildAddressCard(address);
               },
             ),
@@ -107,7 +118,12 @@ class MyAddressesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAddressCard(Map<String, dynamic> address) {
+  Widget _buildAddressCard(dynamic address) {
+    final String title = address['address_type'] ?? address['label'] ?? 'Home';
+    final IconData icon = title.toLowerCase() == 'home' 
+        ? Icons.home_outlined 
+        : (title.toLowerCase() == 'office' ? Icons.work_outline : Icons.location_on_outlined);
+    
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -131,7 +147,7 @@ class MyAddressesScreen extends StatelessWidget {
               color: const Color(0xffF1F5F9),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(address['icon'], color: const Color(0xff64748B), size: 24),
+            child: Icon(icon, color: const Color(0xff64748B), size: 24),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -142,14 +158,14 @@ class MyAddressesScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      address['title'],
+                      title,
                       style: GoogleFonts.poppins(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xff0F172A),
                       ),
                     ),
-                    if (address['isDefault'])
+                    if (address['is_primary'] == true || address['is_primary'] == 1)
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
@@ -169,7 +185,7 @@ class MyAddressesScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  address['address'],
+                  address['address']?.toString() ?? '',
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     color: const Color(0xff64748B),
@@ -181,10 +197,17 @@ class MyAddressesScreen extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           IconButton(
-            onPressed: () {},
+            onPressed: () async {
+              // Delete address
+              try {
+                 final apiService = Get.find<ApiService>();
+                 await apiService.deleteAddress(address['id']);
+                 _fetchAddresses();
+              } catch (e) {}
+            },
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
-            icon: const Icon(Icons.more_vert, color: Color(0xff94A3B8), size: 20),
+            icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
           )
         ],
       ),

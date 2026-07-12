@@ -2,30 +2,43 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'add_ticket_screen.dart';
+import '../../../../core/network/api_service.dart';
 
-class SupportTicketsScreenView extends StatelessWidget {
+class SupportTicketsScreenView extends StatefulWidget {
   const SupportTicketsScreenView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Dummy ticket data
-    final List<Map<String, String>> tickets = [
-      {
-        'id': '#TCK-1002',
-        'subject': 'Payment issue with AC Repair service',
-        'status': 'Open',
-        'date': 'Oct 24, 2026',
-        'color': '0xFF3B82F6', // blue
-      },
-      {
-        'id': '#TCK-0985',
-        'subject': 'Provider did not arrive on time',
-        'status': 'Resolved',
-        'date': 'Oct 18, 2026',
-        'color': '0xFF10B981', // green
-      },
-    ];
+  State<SupportTicketsScreenView> createState() => _SupportTicketsScreenViewState();
+}
 
+class _SupportTicketsScreenViewState extends State<SupportTicketsScreenView> {
+  bool _isLoading = true;
+  List<dynamic> _tickets = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchTickets();
+  }
+
+  Future<void> _fetchTickets() async {
+    try {
+      final apiService = Get.find<ApiService>();
+      final response = await apiService.getTickets();
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        setState(() {
+          _tickets = response.data['data'] ?? [];
+        });
+      }
+    } catch (e) {
+      debugPrint('Error fetching tickets: $e');
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffF8FAFC),
       appBar: AppBar(
@@ -54,14 +67,16 @@ class SupportTicketsScreenView extends StatelessWidget {
           const SizedBox(width: 8),
         ],
       ),
-      body: tickets.isEmpty
+      body: _isLoading 
+          ? const Center(child: CircularProgressIndicator())
+          : _tickets.isEmpty
           ? _buildEmptyState()
           : ListView.separated(
               padding: const EdgeInsets.all(16),
-              itemCount: tickets.length,
+              itemCount: _tickets.length,
               separatorBuilder: (context, index) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
-                final ticket = tickets[index];
+                final ticket = _tickets[index];
                 return _buildTicketCard(ticket);
               },
             ),
@@ -103,8 +118,11 @@ class SupportTicketsScreenView extends StatelessWidget {
     );
   }
 
-  Widget _buildTicketCard(Map<String, String> ticket) {
-    final statusColor = Color(int.parse(ticket['color']!));
+  Widget _buildTicketCard(dynamic ticket) {
+    final status = ticket['status']?.toString().toLowerCase() ?? 'open';
+    final statusColor = status == 'open' 
+        ? const Color(0xFF3B82F6) 
+        : (status == 'resolved' ? const Color(0xFF10B981) : const Color(0xFFF59E0B));
     
     return Container(
       padding: const EdgeInsets.all(16),
@@ -127,7 +145,7 @@ class SupportTicketsScreenView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                ticket['id']!,
+                ticket['ticket_number']?.toString() ?? '#TCK-0000',
                 style: GoogleFonts.poppins(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
@@ -141,7 +159,7 @@ class SupportTicketsScreenView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  ticket['status']!,
+                  status.toUpperCase(),
                   style: GoogleFonts.poppins(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -153,7 +171,7 @@ class SupportTicketsScreenView extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            ticket['subject']!,
+            ticket['subject']?.toString() ?? 'No Subject',
             style: GoogleFonts.poppins(
               fontSize: 15,
               fontWeight: FontWeight.w600,
@@ -166,7 +184,7 @@ class SupportTicketsScreenView extends StatelessWidget {
               const Icon(Icons.access_time, size: 14, color: Color(0xff94A3B8)),
               const SizedBox(width: 4),
               Text(
-                'Last updated: ${ticket['date']}',
+                'Created: ${ticket['created_at']?.toString().substring(0, 10) ?? ''}',
                 style: GoogleFonts.poppins(
                   fontSize: 12,
                   color: const Color(0xff94A3B8),

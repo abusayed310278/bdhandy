@@ -2,9 +2,40 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'post_requirement_screen.dart';
+import '../../../../core/network/api_service.dart';
 
-class MyRequestsScreen extends StatelessWidget {
+class MyRequestsScreen extends StatefulWidget {
   const MyRequestsScreen({super.key});
+
+  @override
+  State<MyRequestsScreen> createState() => _MyRequestsScreenState();
+}
+
+class _MyRequestsScreenState extends State<MyRequestsScreen> {
+  bool _isLoading = true;
+  List<dynamic> _requirements = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchRequirements();
+  }
+
+  Future<void> _fetchRequirements() async {
+    try {
+      final apiService = Get.find<ApiService>();
+      final response = await apiService.getRequirements();
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        setState(() {
+          _requirements = response.data['data'] ?? [];
+        });
+      }
+    } catch (e) {
+      debugPrint('Error fetching requirements: $e');
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,19 +97,16 @@ class MyRequestsScreen extends StatelessWidget {
   }
 
   Widget _buildRequestList(String status) {
-    // Generate dummy data based on status
-    final List<Map<String, dynamic>> requests = List.generate(
-      status == 'Open' ? 3 : (status == 'Assigned' ? 2 : 1),
-      (index) => {
-        'id': '#REQ-80${index + 1}',
-        'title': status == 'Open' ? 'Plumbing Issue in Kitchen' : 'AC Repair and Service',
-        'date': 'Oct 28, 2026',
-        'status': status,
-        'location': '123 Main Street, New York',
-      },
-    );
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-    if (requests.isEmpty) {
+    final filteredReqs = _requirements.where((r) {
+      final s = (r['status'] ?? '').toString().toLowerCase();
+      return s == status.toLowerCase();
+    }).toList();
+
+    if (filteredReqs.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -107,33 +135,38 @@ class MyRequestsScreen extends StatelessWidget {
 
     return ListView.separated(
       padding: const EdgeInsets.all(16),
-      itemCount: requests.length,
+      itemCount: filteredReqs.length,
       separatorBuilder: (context, index) => const SizedBox(height: 16),
       itemBuilder: (context, index) {
-        final request = requests[index];
+        final request = filteredReqs[index];
         return _buildRequestCard(request);
       },
     );
   }
 
-  Widget _buildRequestCard(Map<String, dynamic> request) {
+  Widget _buildRequestCard(dynamic request) {
     Color statusColor;
     Color statusBg;
+    final status = (request['status'] ?? '').toString();
+    final title = (request['title'] ?? 'No Title').toString();
+    final date = (request['created_at'] ?? '').toString().length >= 10 
+        ? request['created_at'].toString().substring(0, 10) 
+        : '';
 
-    switch (request['status']) {
-      case 'Open':
+    switch (status.toLowerCase()) {
+      case 'open':
         statusColor = const Color(0xFF3B82F6);
         statusBg = const Color(0xFFDBEAFE);
         break;
-      case 'Assigned':
+      case 'assigned':
         statusColor = const Color(0xFFF59E0B);
         statusBg = const Color(0xFFFEF3C7);
         break;
-      case 'Complete':
+      case 'complete':
         statusColor = const Color(0xFF10B981);
         statusBg = const Color(0xFFD1FAE5);
         break;
-      case 'Closed':
+      case 'closed':
         statusColor = const Color(0xFF64748B);
         statusBg = const Color(0xFFF1F5F9);
         break;
@@ -163,7 +196,7 @@ class MyRequestsScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                request['id'],
+                '#REQ-${request['id'] ?? '0'}',
                 style: GoogleFonts.poppins(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
@@ -177,7 +210,7 @@ class MyRequestsScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  request['status'],
+                  status.toUpperCase(),
                   style: GoogleFonts.poppins(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -189,7 +222,7 @@ class MyRequestsScreen extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            request['title'],
+            title,
             style: GoogleFonts.poppins(
               fontSize: 16,
               fontWeight: FontWeight.w700,
@@ -202,7 +235,7 @@ class MyRequestsScreen extends StatelessWidget {
               const Icon(Icons.calendar_today_outlined, size: 14, color: Color(0xff94A3B8)),
               const SizedBox(width: 6),
               Text(
-                request['date'],
+                date,
                 style: GoogleFonts.poppins(
                   fontSize: 13,
                   color: const Color(0xff64748B),
@@ -217,7 +250,7 @@ class MyRequestsScreen extends StatelessWidget {
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  request['location'],
+                  request['address'] ?? 'Not provided',
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     color: const Color(0xff64748B),

@@ -6,14 +6,43 @@ import '../../../../core/colors/app_color.dart';
 import '../../../../core/storage/favorites_manager.dart';
 import '../../../home/data/model/salon_model.dart';
 import '../../../home/presentation/controller/home_controller.dart';
+import '../../../../core/network/api_service.dart';
 
-class SavedSalonsScreen extends StatelessWidget {
+class SavedSalonsScreen extends StatefulWidget {
   const SavedSalonsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final FavoritesManager favoritesManager = Get.find<FavoritesManager>();
+  State<SavedSalonsScreen> createState() => _SavedSalonsScreenState();
+}
 
+class _SavedSalonsScreenState extends State<SavedSalonsScreen> {
+  bool _isLoading = true;
+  List<dynamic> _salons = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchSavedSalons();
+  }
+
+  Future<void> _fetchSavedSalons() async {
+    try {
+      final apiService = Get.find<ApiService>();
+      final response = await apiService.getSavedProviders();
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        setState(() {
+          _salons = response.data['data'] ?? [];
+        });
+      }
+    } catch (e) {
+      debugPrint('Error fetching saved providers: $e');
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.background,
       appBar: AppBar(
@@ -36,11 +65,10 @@ class SavedSalonsScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: Obx(() {
-        final salons = favoritesManager.savedSalons;
-
-        if (salons.isEmpty) {
-          return Center(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _salons.isEmpty
+          ? Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -68,28 +96,30 @@ class SavedSalonsScreen extends StatelessWidget {
                 ),
               ],
             ),
-          );
-        }
-
-        return ListView.builder(
+          )
+          : ListView.builder(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-          itemCount: salons.length,
+          itemCount: _salons.length,
           itemBuilder: (context, index) {
-            return _SalonCard(salon: salons[index]);
+            return _SalonCard(providerData: _salons[index]['provider'] ?? {});
           },
-        );
-      }),
+        ),
     );
   }
 }
 
 class _SalonCard extends StatelessWidget {
-  final Salon salon;
+  final Map<String, dynamic> providerData;
 
-  const _SalonCard({required this.salon});
+  const _SalonCard({required this.providerData});
 
   @override
   Widget build(BuildContext context) {
+    final String name = providerData['company_name'] ?? providerData['name'] ?? 'Unknown Provider';
+    final String address = providerData['address'] ?? 'No Address';
+    final String? imageUrl = providerData['logo'] != null 
+        ? 'https://10.0.2.2${providerData['logo']}'
+        : null;
     return GestureDetector(
       // onTap: () {
       //   Get.find<HomeController>().selectSalon(salon);
@@ -117,29 +147,18 @@ class _SalonCard extends StatelessWidget {
               height: 64,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                gradient: salon.imageUrl == null
-                    ? LinearGradient(
-                        colors: [
-                          Color(int.parse('FF${salon.imageColor}', radix: 16)),
-                          Color(
-                            int.parse('FF${salon.imageColor}', radix: 16),
-                          ).withOpacity(0.55),
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      )
-                    : null,
-                image: salon.imageUrl != null
+                color: const Color(0xFFE2E8F0),
+                image: imageUrl != null
                     ? DecorationImage(
-                        image: CachedNetworkImageProvider(salon.imageUrl!),
+                        image: CachedNetworkImageProvider(imageUrl),
                         fit: BoxFit.cover,
                       )
                     : null,
               ),
-              child: salon.imageUrl == null
+              child: imageUrl == null
                   ? Center(
                       child: Text(
-                        salon.name.isNotEmpty ? salon.name[0] : 'S',
+                        name.isNotEmpty ? name[0] : 'P',
                         style: GoogleFonts.poppins(
                           color: Colors.white,
                           fontSize: 24,
@@ -155,7 +174,7 @@ class _SalonCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    salon.name,
+                    name,
                     style: GoogleFonts.poppins(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
@@ -172,7 +191,7 @@ class _SalonCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 3),
                       Text(
-                        '${salon.rating} (${salon.reviewCount})',
+                        '4.5 (10)',
                         style: GoogleFonts.poppins(
                           fontSize: 12,
                           color: AppColor.textSecondary,
@@ -182,7 +201,7 @@ class _SalonCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    salon.address,
+                    address,
                     style: GoogleFonts.poppins(
                       fontSize: 12,
                       color: AppColor.textSecondary,
@@ -197,7 +216,7 @@ class _SalonCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  '${salon.distanceKm} km',
+                  '1.2 km',
                   style: GoogleFonts.poppins(
                     fontSize: 12,
                     color: AppColor.textSecondary,
@@ -211,17 +230,15 @@ class _SalonCard extends StatelessWidget {
                     vertical: 3,
                   ),
                   decoration: BoxDecoration(
-                    color: salon.isOpen
-                        ? AppColor.success.withOpacity(0.1)
-                        : AppColor.error.withOpacity(0.1),
+                    color: AppColor.success.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    salon.isOpen ? 'Open' : 'Closed',
+                    'Open',
                     style: GoogleFonts.poppins(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
-                      color: salon.isOpen ? AppColor.success : AppColor.error,
+                      color: AppColor.success,
                     ),
                   ),
                 ),

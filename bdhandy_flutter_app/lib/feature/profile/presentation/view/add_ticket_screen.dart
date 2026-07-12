@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../core/network/api_service.dart';
+import '../../../../feature/profile/presentation/view/support_tickets_screen_view.dart';
 
 class AddTicketScreen extends StatefulWidget {
   const AddTicketScreen({super.key});
@@ -80,15 +82,37 @@ class _AddTicketScreenState extends State<AddTicketScreen> {
     );
   }
 
-  void _submitTicket() {
-    Get.snackbar(
-      'Success',
-      'Ticket submitted successfully',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.white,
-      colorText: Colors.black87,
-      margin: const EdgeInsets.all(12),
-    );
+  bool _isSubmitting = false;
+
+  Future<void> _submitTicket() async {
+    if (subjectController.text.trim().isEmpty || descriptionController.text.trim().isEmpty) {
+      Get.snackbar('Error', 'Subject and description are required', backgroundColor: Colors.red, colorText: Colors.white);
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+    
+    try {
+      final apiService = Get.find<ApiService>();
+      final response = await apiService.createTicket(
+        subject: subjectController.text.trim(),
+        details: descriptionController.text.trim(),
+      );
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        Get.snackbar(
+          'Success',
+          'Ticket submitted successfully',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        Get.off(() => const SupportTicketsScreenView());
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to submit ticket', backgroundColor: Colors.red, colorText: Colors.white);
+    } finally {
+      setState(() => _isSubmitting = false);
+    }
   }
 
   @override
@@ -386,25 +410,27 @@ class _AddTicketScreenState extends State<AddTicketScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     flex: 2,
-                    child: ElevatedButton(
-                      onPressed: _submitTicket,
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(54),
-                        backgroundColor: const Color(0xff1D9BF0),
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                      child: ElevatedButton(
+                        onPressed: _isSubmitting ? null : _submitTicket,
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(54),
+                          backgroundColor: const Color(0xff1D9BF0),
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: _isSubmitting 
+                          ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                          : const Text(
+                          'Submit Ticket',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                          ),
                         ),
                       ),
-                      child: const Text(
-                        'Submit Ticket',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ),
                   ),
                 ],
               ),
